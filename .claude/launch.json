@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "design",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8811", "--directory", "/Users/user/Habit Builder App/design"],
+      "port": 8811
+    },
+    {
+      "name": "app",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8812", "--directory", "/Users/user/Habit Builder App/app"],
+      "port": 8812
+    }
+  ]
+}

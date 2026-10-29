@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Habit Builder</title>
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/open-sauce-one">
+<style>
+:root{--bg:#FAFAFA;--fg:#111;--card:#fff;--soft:#EFEFEF;--soft2:#F0F0F0;--soft3:#F3F3F3;--line:#DDD;--muted:#666;--dash:#9a9a9a;--off:#E8E8E8;--offb:#C4C4C4;--offf:#9A9A9A;--chipb:#BDBDBD;--green:#5CB85C;--green2:#4CA84C;--hover:#E4F3E4;--red:#B33;--redbg:#FBEAEA;--redfg:#7A1F1F;--shadow:rgba(0,0,0,.18)}
+:root[data-theme=dark]{--bg:#151515;--fg:#F2F2F2;--card:#1F1F1F;--soft:#232323;--soft2:#1C1C1C;--soft3:#202020;--line:#3A3A3A;--muted:#A0A0A0;--dash:#4A4A4A;--off:#2A2A2A;--offb:#444;--offf:#777;--chipb:#555;--hover:rgba(92,184,92,.2);--red:#E06666;--redbg:rgba(224,102,102,.12);--redfg:#F2B8B8;--shadow:rgba(0,0,0,.5)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:'Open Sauce One','Open Sauce Sans',system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%}
+a{color:var(--fg)}a:hover{color:var(--green)}
+button,select,input,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer}
+select{background:transparent;color:var(--fg)}
+select option{color:#111;background:#fff}
+.muted{color:var(--muted)}
+.b{font-weight:700}
+.row{display:flex;align-items:center}
+.sp{flex:1}
+.ham{width:40px;height:40px;flex:none;border:1.5px solid var(--fg);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;background:transparent;color:var(--fg)}
+.ham:hover{background:var(--soft)}
+.ham svg{width:20px;height:20px;display:block}
+.btn{height:40px;padding:0 16px;border:1.5px solid var(--fg);border-radius:8px;background:var(--bg);color:var(--fg);font-weight:600;font-size:13px;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn.g{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
+.btn.g:hover{background:var(--green2)}
+.btn.g[disabled],.btn.g.dis{background:#BDBDBD;border-color:#BDBDBD;cursor:not-allowed}
+.btn.red{border-color:var(--red);color:var(--red)}
+.btn.dark{background:var(--fg);color:var(--bg)}
+.btn.lg{height:48px;font-size:15px}
+.linkbtn{background:none;border:0;padding:0;font-weight:700;text-decoration:underline;font-size:13px}
+.seg{display:flex;border:1.5px solid var(--fg);border-radius:8px;overflow:hidden}
+.seg>*{padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;border:0;background:transparent;white-space:nowrap}
+.seg>.on{background:var(--fg);color:var(--bg)}
+.lbl{font-weight:800;font-size:12px;letter-spacing:.12em}
+.lbl2{font-weight:700;font-size:11px;letter-spacing:.1em;opacity:.78}
+.tinp{color:var(--fg)}
+.tinp:focus{border:1.5px solid var(--fg)!important;background:var(--card)!important}
+.inp{height:42px;border:1.5px solid var(--fg);border-radius:8px;background:var(--card);padding:0 12px;font-size:14px;outline:none;width:100%}
+.sel{height:34px;border:1.5px solid var(--fg);border-radius:8px;padding:0 8px;font-size:13px;font-weight:600;cursor:pointer}
+.hsel{height:40px;border:1.5px solid var(--fg);border-radius:8px;background:var(--bg);font-size:14px;font-weight:700;padding:0 10px;cursor:pointer;min-width:96px}
+/* Sapaan dengan animasi mengetik */
+.gr{position:relative;display:block}
+.gr>.ghost{visibility:hidden}
+.gr>.vis{position:absolute;left:0;top:0;right:0}
+.gr .gh{display:block;font-size:var(--gh);font-weight:800;line-height:1.15}
+.gr .gm{display:block;font-size:var(--gm);font-weight:800;line-height:1.28;margin-top:var(--gg)}
+.gr i{display:inline-block;width:.09em;min-width:2px;height:1.05em;background:var(--green);margin-left:3px;vertical-align:-.15em;animation:blink 1s step-end infinite}
+.gr i.off{display:none}
+.gr .gm.af{font-style:italic}
+.gr .gm.gst{display:grid}.gr .gst>span{grid-area:1/1}.gr .gst>.af{font-style:italic}
+@keyframes blink{50%{opacity:0}}
+.msel{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0}
+.mpill{white-space:nowrap;font-size:11px;font-weight:700;padding:3px 6px;border-radius:10px;border:1.5px solid var(--fg);cursor:pointer}
+.env{display:block}
+.jadd{width:28px;height:28px;flex:none;border:1.5px solid var(--fg);border-radius:8px;background:var(--bg);color:var(--fg);font-size:18px;font-weight:700;line-height:1;padding:0;display:flex;align-items:center;justify-content:center}
+.jadd:hover{background:var(--green);border-color:var(--green);color:#fff}
+textarea{outline:none}
+textarea::placeholder{color:var(--muted);opacity:.55}
+.affb{width:26px;height:26px;flex:none;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--fg);border-radius:999px;background:var(--bg);color:var(--fg);cursor:pointer;padding:0}
+.affb:not(.on) svg{opacity:.45}.affb:hover{background:var(--soft)}
+.affi{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;color:var(--fg);cursor:pointer;flex:none}
+.affi:hover{background:var(--soft)}
+.aft{width:100%;min-height:150px;resize:none;border:0;border-radius:10px;background:var(--soft);color:var(--fg);padding:14px 16px;font-size:16px;line-height:1.55;font-family:inherit}
+.affl{width:100%;resize:none;border:1px dashed #999;border-radius:6px;background:var(--bg);color:var(--fg);padding:10px;font-size:14px;line-height:1.5;font-family:inherit}
+.chip{display:inline-flex;align-items:center;white-space:nowrap;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px}
+.spin{width:22px;height:22px;border:3px solid var(--line);border-top-color:var(--fg);border-radius:50%;animation:sp 0.8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+
+/* Status simpan */
+.ind{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1.5px solid var(--line);border-radius:14px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--bg)}
+.ind i{width:8px;height:8px;border-radius:50%;background:var(--green);display:block}
+.ind.saving i{background:#BDBDBD;animation:pl 1s ease-in-out infinite}
+.ind.pending i{background:#F0A030}
+.ind.failed{border-color:#D33;color:#D33}.ind.failed i{background:#D33}
+.ind button{border:0;background:none;padding:0;font-weight:800;text-decoration:underline;color:inherit;font-size:12px}
+@keyframes pl{50%{opacity:.3}}
+
+/* Dashboard desktop (1a) */
+.dash-wrap{overflow-x:auto;min-height:100vh}
+.dash{display:grid;grid-template-columns:260px auto 300px;column-gap:28px;row-gap:32px;padding:24px 32px 120px;width:max-content;margin:0 auto}
+.h-title{box-sizing:border-box;border-top:2px solid var(--fg);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800}
+.wk{display:flex;background:var(--fg);color:var(--bg);height:30px}
+.wk>div{flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.wk>div+div{border-left:1.5px solid var(--bg)}
+.dr{display:flex;height:26px}
+.dr>div,.cell,.bar,.dl,.ms,.ji{width:28px;flex:none;display:flex;align-items:center;justify-content:center}
+.sep{border-left:1.5px solid var(--fg)}
+.dr>div{font-size:11px;font-weight:700}
+.dr.num>div{font-size:12px;font-weight:400}
+.dnum{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.dnum.today{background:var(--fg);color:var(--bg)}
+.grow{display:flex;height:32px;border-bottom:1px dashed var(--dash)}
+.cell{position:relative;cursor:pointer;height:100%}
+.cell:hover{background:var(--hover)}
+.box{width:16px;height:16px;border:1.5px solid var(--fg);border-radius:2px;background:var(--card);color:var(--bg);font-size:12px;line-height:13px;text-align:center;font-weight:700}
+.box.on{background:var(--fg)}
+.cell.off{cursor:not-allowed}.cell.off:hover{background:none}
+.cell.off .box{border-color:var(--offb);background:var(--off);color:var(--offf)}
+.cell.saving .box{opacity:.4}
+.cell.pending::after{content:'';position:absolute;top:3px;right:2px;width:6px;height:6px;border-radius:50%;background:#F0A030}
+.cell.failed::after{content:'';position:absolute;left:5px;right:5px;bottom:3px;height:2px;background:#D33}
+.hrow{height:32px;border-bottom:1px dashed var(--dash);display:flex;align-items:center;gap:12px;font-size:14px}
+.hrow:hover{background:var(--soft2)}
+.hrow .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.hrow .nm:hover{text-decoration:underline}
+.hrow .grip{color:#aaa;font-size:11px;letter-spacing:-1px;padding-right:6px;cursor:grab}
+.hrow.over{box-shadow:inset 0 2px 0 var(--green)}
+.addrow{margin-top:10px;height:32px;border:1.5px dashed var(--fg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;background:transparent;width:100%}
+.addrow:hover{background:var(--soft2)}
+.mh-sel{display:grid;grid-template-columns:80px 1fr;border:1.5px solid var(--fg);font-size:13px;flex:1}
+.mh-sel>div{padding:7px 10px;font-weight:700}
+.mh-sel select{width:100%;height:100%;border:0;font-size:13px;padding:0 8px;cursor:pointer}
+.pg{display:grid;grid-template-columns:52px 1fr 64px;align-items:center;font-size:12px;height:32px;border-bottom:1px dashed var(--dash)}
+.pg>span:first-child{border-right:1px solid var(--fg);height:100%;display:flex;align-items:center;justify-content:center}
+.ms{position:relative;height:30px;font-size:12px;font-weight:600;cursor:pointer}
+.ms:hover{outline:1.5px solid var(--fg);outline-offset:-2px}
+.ji{height:30px}
+.top10{display:grid;grid-template-columns:34px 1fr 64px;height:32px;border-bottom:1px dashed var(--dash);align-items:center;font-size:13px}
+.fab{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg);border:2px solid var(--fg);border-radius:12px;box-shadow:0 6px 20px var(--shadow)}
+.empty-card{border:1.5px dashed var(--fg);border-radius:10px;padding:28px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;margin-top:16px}
+.sug{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.sug button{border:1.5px solid var(--chipb);border-radius:16px;background:var(--bg);padding:6px 12px;font-size:13px}
+.sug button:hover{background:var(--soft)}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;width:100%;background:transparent}
+.opt.on{border:2px solid var(--fg);background:var(--card)}
+.radio{width:16px;height:16px;flex:none;border-radius:50%;border:1.5px solid var(--fg);display:flex;align-items:center;justify-content:center;margin-top:2px}
+.radio i{width:8px;height:8px;border-radius:50%;background:transparent;display:block}
+.on>.radio i,.radio.on i{background:var(--fg)}
+.banner{grid-column:1/-1;display:flex;align-items:center;gap:16px;border:2px solid var(--fg);border-radius:10px;padding:14px 18px;background:var(--card)}
+
+/* Halaman umum */
+.topbar{position:sticky;top:0;z-index:12;display:flex;align-items:center;gap:16px;height:72px;padding:0 32px;background:var(--bg);border-bottom:2px solid var(--fg)}
+.topbar h1{margin:0;font-weight:800;font-size:24px;letter-spacing:.12em;line-height:1;white-space:nowrap}
+.cloud{width:32px;height:32px;flex:none;display:flex;align-items:center;justify-content:center;position:relative;border:0;background:none;padding:0;color:var(--fg)}
+.cloud b{position:absolute;right:3px;bottom:6px;width:9px;height:9px;border-radius:50%;background:var(--green);border:1.5px solid var(--bg)}
+.cloud.saving b{background:#BDBDBD;animation:pl 1s ease-in-out infinite}
+.cloud.pending b{background:#F0A030}
+.cloud.failed b{background:#D33}
+.pg-body{padding:24px;max-width:1280px;margin:0 auto}
+
+/* Jurnal (4a) */
+.jgrid{display:grid;grid-template-columns:320px 1fr;height:calc(100vh - 72px)}
+.jtoday{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1.5px dashed var(--fg);border-radius:12px;cursor:pointer;width:100%;background:transparent;text-align:left}
+.jtoday:hover{background:var(--soft2)}
+.jlist{border-right:2px solid var(--fg);overflow-y:auto;padding:12px 14px 40px}
+.jgh{display:flex;justify-content:space-between;align-items:baseline;font-weight:800;font-size:13px;margin:14px 2px 8px}
+.jcard{display:flex;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;cursor:pointer;background:transparent;width:100%;text-align:left}
+.jcard.on{border:2px solid var(--fg);background:var(--card)}
+.jcard .d{width:34px;flex:none;text-align:center}
+.jcard .d b{display:block;font-size:20px;line-height:1.1}
+.jcard .d span{font-size:9px;color:var(--muted)}
+.jcard .tx{font-size:13px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jedit{padding:22px 28px;display:flex;flex-direction:column;gap:14px;min-height:0}
+.jedit textarea{flex:1;min-height:240px;resize:none;border:1.5px solid var(--fg);border-radius:8px;background:var(--card);padding:12px;font-size:15px;line-height:1.55}
+.jedit textarea.affl{flex:none;min-height:0;height:84px;border-width:1.5px;font-size:15px}
+.moods{display:flex;gap:6px;flex-wrap:wrap}
+.moods button{height:32px;padding:0 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--bg);border:1.5px solid #BDBDBD}
+.moodgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.moodgrid button{height:60px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--bg);border:1.5px solid #BDBDBD}
+.moodgrid b{font-size:17px}.moodgrid span{font-size:10px}
+
+/* Statistik (3b) */
+.kpi{display:flex;gap:40px;align-items:flex-end;flex-wrap:wrap}
+.kpi .v{font-weight:800;font-size:32px}
+.chart{background:var(--soft2);border-radius:6px;padding:8px 0}
+.mx{overflow-x:auto}
+.mx table{border-collapse:separate;border-spacing:3px;font-size:12px;min-width:760px;width:100%}
+.mx th{font-size:10px;font-weight:700;color:var(--muted);text-align:center}
+.mx td.c{width:44px;height:24px;text-align:center;font-size:10px;font-weight:700;border-radius:3px}
+.mx td.n{white-space:nowrap;padding-right:10px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.mx td.t{text-align:right;font-weight:800;padding-left:8px}
+.mx tr.tot td{border-top:2px solid var(--fg);padding-top:6px}
+.chk{width:18px;height:18px;border:1.5px solid var(--fg);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--card);color:var(--bg)}
+.chk.on{background:var(--fg)}
+
+/* Pengaturan (3d) */
+.srow{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.srow h3{margin:0 0 3px;font-size:15px}
+.mrow{display:flex;align-items:center;gap:10px}
+.mrow .inp{height:40px}
+.mnum{width:32px;height:32px;flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.srow p{margin:0;font-size:12px;color:var(--muted)}
+
+/* Menu (3a) */
+.ov{position:fixed;inset:0;z-index:50;background:rgba(17,17,17,.4);display:flex}
+.drawer{width:260px;max-width:86vw;height:100%;background:var(--bg);border-right:2px solid var(--fg);display:flex;flex-direction:column;padding:18px 14px}
+.mi{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:0;background:transparent;width:100%;text-align:left}
+.mi:hover{background:var(--soft)}
+.mi.on{background:var(--fg);color:var(--bg)}
+.mi svg{width:18px;height:18px;flex:none}
+.mtg{height:40px;padding:0 12px;border:1.5px solid var(--line);border-radius:10px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;background:transparent}
+.mtg:hover{background:var(--soft)}
+.mtg svg{width:18px;height:18px}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(17,17,17,.35);display:flex;justify-content:center;align-items:flex-start;padding:60px 16px;overflow-y:auto}
+.panel{background:var(--bg);border:2px solid var(--fg);border-radius:12px;box-shadow:0 16px 48px rgba(0,0,0,.25);display:flex;flex-direction:column;overflow:hidden;width:100%}
+.handle{display:flex;justify-content:center;padding-top:8px;flex:none}
+.handle i{width:40px;height:4px;border-radius:2px;background:var(--offb)}
+.pbody{flex:1;min-height:0;overflow-y:auto}
+.delband{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;background:var(--redbg);border-top:1.5px solid var(--red);flex-wrap:wrap}
+.delband>span{font-size:13px;color:var(--redfg);font-weight:600}
+.btn.redfill{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1.5px solid var(--fg)}
+.kbd{display:inline-block;min-width:26px;padding:2px 7px;border:1.5px solid var(--fg);border-bottom-width:3px;border-radius:6px;font-family:inherit;font-size:12px;font-weight:700;line-height:18px;text-align:center;background:var(--bg);color:var(--fg)}
+.phead h2{margin:0;font-weight:800;font-size:20px}
+.x{width:32px;height:32px;flex:none;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;border-radius:6px;border:0;background:transparent}
+.x:hover{background:var(--soft)}
+.pfoot{display:flex;gap:10px;align-items:center;padding:16px 20px;border-top:1.5px solid var(--fg)}
+.qrow{min-height:44px;display:flex;align-items:center;gap:12px;padding:0 8px;border-bottom:1px dashed #BDBDBD;cursor:pointer;width:100%;background:transparent;border-left:0;border-right:0;border-top:0;text-align:left}
+.qrow:hover{background:var(--soft2)}
+.qbox{width:22px;height:22px;flex:none;border:2px solid var(--fg);border-radius:3px;background:var(--card);color:var(--bg);font-size:15px;line-height:18px;text-align:center;font-weight:700}
+.qbox.on{background:var(--fg)}
+.qbox.saving{opacity:.4}
+.prog{display:flex;align-items:center;gap:12px}
+.prog>div{flex:1;height:8px;background:#E2E2E2;border-radius:4px}
+:root[data-theme=dark] .prog>div{background:#333}
+.prog>div>div{height:100%;background:var(--fg);border-radius:4px;transition:width .2s}
+.fr{display:flex;align-items:center;gap:8px;height:40px;padding:0 10px;white-space:nowrap;border:1.5px solid #C9C9C9;border-radius:8px;font-size:14px;cursor:pointer}
+.fr.on{border-color:var(--fg);background:var(--card)}
+.fr input{width:52px;height:28px;border:1.5px solid var(--fg);border-radius:6px;background:var(--card);padding:0 6px;font-size:14px;text-align:center}
+.tg{display:flex;gap:5px}
+.tg button{flex:1;height:36px;border:1.5px solid var(--chipb);border-radius:8px;background:var(--bg);font-size:13px;font-weight:600;padding:0}
+.tg button.on{background:var(--fg);color:var(--bg);border:2px solid var(--fg)}
+.cal2{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal2.hd{font-size:10px;font-weight:700;text-align:center}
+.cal2>div{height:34px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:4px}
+.cal2>div>span{width:16px;text-align:right;font-size:11px;font-weight:600;color:var(--muted)}
+.cal2 .click{cursor:pointer}.cal2 .click:hover{background:var(--hover)}
+.cal2 .box{width:18px;height:18px;line-height:15px}
+.cal2 .off .box{border-color:var(--offb);background:var(--off);color:var(--offf)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal>div{height:34px;border:1.5px solid transparent;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.cal.hd>div{height:auto;font-size:11px;font-weight:700}
+.cal .k{border-color:var(--fg);background:var(--card)}
+.cal .k.flex{border-style:dashed}
+.cal .done{background:var(--green);border-color:var(--green);color:#fff}
+.cal .off{background:var(--off);border-color:var(--off);color:var(--offf)}
+.cal .past{background:var(--soft3);border-color:var(--line);color:#BBB}
+.cal .today{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.cal .click{cursor:pointer}.cal .click:hover{outline:2px solid var(--green);outline-offset:1px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:12px;height:12px;display:block}
+.pbar{height:18px;border:1.5px solid var(--fg);background:var(--card)}
+.pbar>div{height:100%;transition:width .2s}
+.err{border:1.5px solid #D33;border-radius:8px;padding:12px 14px;color:#D33;font-size:13px;background:rgba(221,51,51,.06)}
+.toast{position:fixed;right:24px;bottom:96px;z-index:80;background:var(--fg);color:var(--bg);font-size:13px;font-weight:600;padding:10px 16px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.2);max-width:calc(100vw - 48px)}
+
+/* HP (7a, 5d–5i, 6n–6v) */
+.m-wrap{max-width:560px;margin:0 auto;padding-bottom:40px}
+.m-top{display:flex;align-items:center;gap:10px;padding:12px 16px}
+.m-sec{padding:0 16px}
+/* 7a: kolom kiri beku 50% layar, kanan digeser per minggu (1 slide = 7 hari) */
+.m7{--sw:50vw;--dc:calc(var(--sw) / 7);overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-left:var(--sw);overscroll-behavior-x:contain;scrollbar-width:none}
+.m7::-webkit-scrollbar{display:none}
+.m7g{display:grid;grid-template-columns:var(--sw) max-content;width:max-content;row-gap:28px;padding:8px 0 20px}
+.m7l{position:sticky;left:0;z-index:3;background:var(--bg);padding:0 10px 0 14px;display:flex;flex-direction:column;box-shadow:8px 0 8px -8px rgba(0,0,0,.25);min-width:0}
+.m7r{display:flex;align-items:flex-start}
+.sl{width:var(--sw);flex:none;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column}
+.sl.bl{border-left:1.5px solid var(--fg)}
+.dc{width:var(--dc);flex:none;display:flex;align-items:center;justify-content:center}
+.m7 .wk{justify-content:center;font-weight:800;font-size:13px;align-items:center}
+.m7 .grow{height:40px}
+.m7 .cell{width:var(--dc)}
+.m7 .box{width:18px;height:18px;line-height:15px}
+.m7h{box-sizing:border-box;border-top:2px solid var(--fg);display:flex;align-items:center;justify-content:center;font-weight:800;text-align:center;line-height:1.1}
+.m7row{height:40px;border-bottom:1px dashed var(--dash);display:flex;align-items:center;gap:6px;font-size:13px}
+.m7row .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.mfab{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:2px;padding:4px;background:var(--bg);border:2px solid var(--fg);border-radius:15px;box-shadow:0 8px 24px var(--shadow)}
+.mfab button{width:56px;height:40px;display:flex;align-items:center;justify-content:center;border:0;border-radius:12px;background:transparent;color:var(--fg)}
+.mfab button:hover{background:var(--soft)}
+.mfab button.g{width:50px;margin:0 4px;border-radius:14px;background:var(--green);color:#fff;font-size:26px;font-weight:700;line-height:24px}
+.mfab svg{width:20px;height:20px}
+.mdec{background:var(--fg);color:var(--bg);border-radius:12px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:6px}
+.mdec .btn.g{flex:1}
+.mdec .linkbtn{color:var(--bg)}
+/* Tablet portrait: topbar laptop dirapatkan supaya muat */
+@media (max-width:899px){.topbar{padding:0 16px;gap:10px}.topbar h1{font-size:20px}
+  .mgrid{grid-template-columns:minmax(0,1fr)!important}.mgrid>div:first-child{border-right:0!important;border-bottom:1.5px dashed var(--chipb)}}
+/* HP: lebar <600, atau HP landscape (lebar <768 & tinggi <600). Tablet (sisi pendek ≥600) pakai layout laptop. */
+@media (max-width:599px),(max-width:767px) and (max-height:599px){
+  .topbar{height:56px;padding:0 10px 0 6px;gap:4px}
+  .topbar h1{flex:1;min-width:0;font-size:16px;letter-spacing:.1em}
+  .ham{width:44px;height:44px;border:0}
+  .ham svg{width:22px;height:22px}
+  .hsel{height:36px;font-size:13px;padding:0 4px;min-width:0}
+  .tg button{height:44px;font-size:12px}
+  .fr{min-height:46px;border-radius:10px}
+  .cal2>div{height:44px}
+  .cal2 .box{width:22px;height:22px;font-size:16px;line-height:19px}
+  .delband{padding:12px 16px}
+  .delband .btn{flex:1}
+  .pg-body{padding:16px}
+  .jgrid{display:block;height:auto}
+  .jlist{border-right:0;overflow:visible;padding:4px 16px 90px}
+  .jedit{padding:16px}
+  .modal{padding:0;align-items:flex-end}
+  .panel{border-radius:20px 20px 0 0;border:0;max-height:94vh;overflow-y:auto}
+  .modal.tall .panel{height:calc(100% - 56px);max-height:none;overflow:hidden}
+  .two{grid-template-columns:1fr!important}
+  .kpi{gap:12px}.kpi>div{flex:1}
+  .kpi .v{font-size:26px}
+  .toast{right:16px;left:16px;bottom:calc(84px + env(safe-area-inset-bottom));text-align:center}
+  .hide-m{display:none!important}
+  .affb{width:32px;height:32px}
+}
+@media (min-width:768px),(min-width:600px) and (min-height:600px){.hide-d{display:none!important}}
+@media print{
+  .fab,.mfab,.toast,.ind,.ham,.no-print{display:none!important}
+  .topbar{position:static}
+  .dash{padding:0}
+  .dash-wrap{overflow:visible}
+  @page{size:A3 landscape;margin:10mm}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ═════════════ Konstanta & util ═════════════ */
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const INI=['Su','Mo','Tu','We','Th','Fr','Sa'];
+// Nama bulan/hari, contoh habit, dan placeholder jurnal diisi ulang sesuai bahasa (lihat applyLang)
+const MID=[],DAYID=[],DS=[],SUGGEST=[];let JPH='',APH='';
+const CW=28;
+const qs=new URLSearchParams(location.search);
+const $app=document.getElementById('app');
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dim=(y,m)=>new Date(y,m+1,0).getDate();
+const pad=v=>String(v).padStart(2,'0');
+const dkey=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
+const parseD=s=>{const [a,b,c]=String(s).split('-').map(Number);return new Date(a,b-1,c);};
+const comma=v=>S.settings.lang==='en'?String(v):String(v).replace('.',',');
+const today=()=>{const t=new Date();return {y:t.getFullYear(),m:t.getMonth(),d:t.getDate()};};
+const isMobile=()=>window.matchMedia('(max-width: 599px), (max-width: 767px) and (max-height: 599px)').matches;
+const uid=()=>'h'+Math.random().toString(36).slice(2,10);
+const fmtStamp=ms=>{if(!ms)return '–';const t=new Date(ms);return `${t.getDate()} ${MID[t.getMonth()].slice(0,3)} ${t.getFullYear()}, ${pad(t.getHours())}:${pad(t.getMinutes())}`;};
+function rnd(a,b,c,d){const x=Math.sin(a*12.9898+b*78.233+c*37.719+d*4.581)*43758.5453;return x-Math.floor(x);}
+function smooth(p){if(!p.length)return '';let s=`M${p[0][0]},${p[0][1]}`;for(let i=0;i<p.length-1;i++){const p0=p[i-1]||p[i],p1=p[i],p2=p[i+1],p3=p[i+2]||p2;s+=` C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)} ${p2[0]},${p2[1]}`;}return s;}
+function freqLabel(f){const b=f.type==='daily'?tr('Setiap hari'):tr(f.type==='everyN'?'Tiap {n} hari sekali':f.type==='perWeek'?'{n}× seminggu':'{n}× sebulan',{n:f.n});const ds=f.days&&f.days.length?' · '+[1,2,3,4,5,6,0].filter(x=>f.days.includes(x)).map(x=>DS[x]).join(' '):'';const ws=f.weeks&&f.weeks.length?' · W'+[...f.weeks].sort().join(', W'):'';return b+ds+ws;}
+
+const L={
+  id:{dash:'Dashboard',jour:'Jurnal',stats:'Statistik',sett:'Pengaturan',dashT:'DASHBOARD',lang:'Bahasa',langSub:'Bahasa antarmuka aplikasi',theme:'Tampilan',themeSub:'Mode terang atau gelap',light:'Terang',dark:'Gelap',greet:'Sapaan dashboard',greetSub:'Tampil di dashboard dengan animasi mengetik',gName:'Nama',gMsg:'Pesan',preview:'PRATINJAU',folder:'Folder Drive',acct:'Akun Google',acctSub:'Data tersimpan di Google Sheet milikmu. Save & Load membuat cadangan di Google Drive.',signed:'Masuk sebagai',saved:'Terakhir disimpan ke Drive',saveNow:'Save sekarang',load:'Load',years:'Daftar tahun',yearsSub:'Setiap tahun berisi 12 halaman bulan',addYear:'+ Tambah tahun',repair:'Periksa & perbaiki struktur',repairSub:'Memperbaiki baris atau kolom Sheet yang rusak akibat edit manual',repairBtn:'Periksa sekarang',statsT:'STATISTIK TAHUNAN',jourT:'JURNAL',year:'TAHUN'},
+  en:{dash:'Dashboard',jour:'Journal',stats:'Statistics',sett:'Settings',dashT:'DASHBOARD',lang:'Language',langSub:'App interface language',theme:'Appearance',themeSub:'Light or dark mode',light:'Light',dark:'Dark',greet:'Dashboard greeting',greetSub:'Shown on the dashboard with a typing animation',gName:'Name',gMsg:'Message',preview:'PREVIEW',folder:'Drive folder',acct:'Google account',acctSub:'Your data lives in your own Google Sheet. Save & Load keep a backup in Google Drive.',signed:'Signed in as',saved:'Last saved to Drive',saveNow:'Save now',load:'Load',years:'Years',yearsSub:'Each year holds 12 month pages',addYear:'+ Add year',repair:'Check & repair structure',repairSub:'Fixes Sheet rows or columns broken by manual edits',repairBtn:'Check now',statsT:'YEARLY STATISTICS',jourT:'JOURNAL',year:'YEAR'}
+};
+const t=k=>(L[S.settings.lang]||L.id)[k]||L.id[k];
+
+/* ═════════════ Bahasa: teks sumber Indonesia, terjemahan Inggris di EN ═════════════
+   tr('Lembar {y} belum ada',{y}) → teks sesuai bahasa aktif, {nama} diganti nilainya. */
+const LANGS={
+  id:{mon:['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],day:['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],ds:['Min','Sen','Sel','Rab','Kam','Jum','Sab'],
+    mood:['Buruk','Kurang','Biasa','Baik','Hebat'],sug:['Minum 1 gelas air','Jalan kaki 10 menit','Baca 5 halaman','Tidur sebelum jam 10'],jph:'Apa yang berjalan baik hari ini?\nApa yang kurang berjalan hari ini?\nApa yang bisa diperbaiki besok?\nApa yang kamu syukuri hari ini?',aph:'Contoh: Aku mampu konsisten. Aku pantas bahagia.',greet:'Gimana progressmu hari ini?'},
+  en:{mon:MONTHS,day:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],ds:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    mood:['Bad','Poor','Okay','Good','Great'],sug:['Drink a glass of water','Walk for 10 minutes','Read 5 pages','Sleep before 10 pm'],jph:"What went well today?\nWhat didn't go so well today?\nWhat can you improve tomorrow?\nWhat are you grateful for today?",aph:'E.g. I can stay consistent. I deserve to be happy.',greet:"How's your progress today?"}
+};
+const EN={
+  // Umum & status simpan
+  'Setiap hari':'Every day','Tiap {n} hari sekali':'Every {n} days','{n}× seminggu':'{n}× a week','{n}× sebulan':'{n}× a month',
+  'Gagal menyimpan · ketuk untuk coba lagi':'Couldn’t save · tap to retry','Menyimpan…':'Saving…','Belum tersimpan · {n} perubahan':'Not saved yet · {n} changes','Tersimpan ke Google Sheet':'Saved to Google Sheet','Gagal menyimpan':'Couldn’t save','Coba lagi':'Try again','Tersimpan':'Saved','Tersimpan otomatis':'Saved automatically',
+  'Gagal memuat {y}':'Couldn’t load {y}','Aplikasi gagal dimuat':'The app couldn’t load','Pastikan kamu masuk dengan akun Google pemilik salinan sheet, lalu coba lagi.':'Make sure you’re signed in with the Google account that owns this copy of the sheet, then try again.','Memuat Habit Builder…':'Loading Habit Builder…',
+  '+ Tambah tahun':'+ Add year','Bulan':'Month','Tahun':'Year','Tutup':'Close','Batal':'Cancel','Simpan':'Save','Hapus':'Delete','Lanjutkan':'Continue','Nanti':'Later','Kembali':'Back','Tanggal':'Date','Hari ini':'Today',
+  // Lembar tahun
+  'Lembar {y} belum ada':'The {y} sheet doesn’t exist yet','Buat lembar {y} untuk mulai mencatat. 12 bulan (Januari–Desember) dibuat sekaligus.':'Create the {y} sheet to start tracking. All 12 months (January–December) are created at once.',' Data {p} tetap aman.':' Your {p} data stays safe.','Buat lembar {y}':'Create {y} sheet','Lihat {p}':'View {p}','Lembar {y} belum dibuat.':'The {y} sheet hasn’t been created yet.',
+  '{y} tinggal {n} hari':'{n} days left in {y}','Siapkan lembar {n} sekarang supaya 1 Januari langsung bisa dipakai.':'Set up the {n} sheet now so it’s ready on January 1.','Tambah lembar {y}':'Add {y} sheet',
+  // Grid & dashboard
+  'Tidak dijadwalkan':'Not scheduled','Gagal menyimpan. Ketuk untuk coba lagi.':'Couldn’t save. Tap to retry.','Pilih mood {d} {m}':'Pick mood for {m} {d}',
+  'skor mood':'mood score','% habit harian':'daily habit %','ada jurnal':'has journal','sedang dibuka':'open now','skor':'score','· klik skor = pilih mood':'· click a score to pick a mood',
+  'selesai':'done','belum':'not yet','tidak dijadwalkan / belum mulai':'not scheduled / not started','· hover = hijau muda':'· hover = light green','tidak dijadwalkan':'not scheduled',
+  'Seret untuk mengurutkan':'Drag to reorder','+ Tambah habit':'+ Add habit',' · goal manual':' · manual goal','Jurnal {d} {m}':'Journal {m} {d}','Muncul setelah ada habit yang dicentang.':'Shows up once habits are checked.',
+  '+ Input cepat':'+ Quick input','Input cepat':'Quick input','Save ke Google Drive':'Save to Google Drive','Load dari Google Drive':'Load from Google Drive',
+  // Journal Today
+  'Belum ada jurnal bulan ini':'No journal this month yet','Tulis 1–2 kalimat tentang hari ini. Cukup 30 detik.':'Write 1–2 sentences about today. It takes 30 seconds.','Tulis jurnal hari ini':'Write today’s journal','Tulis jurnal':'Write journal',
+  'Tanggal jurnal baru':'New journal date','Batal tulis jurnal baru':'Cancel new journal','Tulis jurnal baru':'Write a new journal','Mood –':'Mood –','– kosongkan':'– clear',
+  // Bulan tanpa habit
+  '{m} {y} belum punya habit':'{m} {y} has no habits yet','Pilih cara memulai bulan ini.':'Choose how to start this month.','Salin dari {m} {y}':'Copy from {m} {y}','disarankan':'recommended',
+  '{n} habit beserta urutan, frekuensi, dan goal manual. Centang, mood, dan jurnal tidak ikut disalin.':'{n} habits with their order, frequency, and manual goals. Checks, moods, and journals aren’t copied.',
+  'Mulai kosong':'Start empty','Tambah habit satu per satu.':'Add habits one by one.','Belum ada habit':'No habits yet','Mulai dengan 1–3 habit kecil. Kamu bisa menambah, mengubah, atau menghapus kapan saja.':'Start with 1–3 small habits. You can add, edit, or delete them anytime.',
+  '+ Tambah habit pertama':'+ Add your first habit','Salin {n} habit beserta frekuensi &amp; goal. Centang, mood, dan jurnal tidak ikut.':'Copy {n} habits with their frequency &amp; goals. Checks, moods, and journals aren’t copied.',
+  'atau mulai dari contoh:':'or start from an example:','MOOD &amp; JURNAL':'MOOD &amp; JOURNAL','Tetap bisa diisi tanpa habit lewat Input cepat.':'You can still log them without habits via Quick input.',
+  'Akun Google pemilik sheet':'Google account that owns the sheet',
+  // Jurnal
+  '{n} jurnal':'{n} journals','Belum ada jurnal di {y}':'No journals in {y} yet','{n} entri':'{n} entries','Belum ada jurnal di bulan ini.':'No journals this month.','+ Tulis':'+ Write','Jurnal yang ditulis di tahun ini muncul di sini.':'Journals written this year show up here.','Pilih jurnal di kiri.':'Pick a journal on the left.',
+  'Belum ada jurnal':'No journal yet','+ Tulis jurnal':'+ Write journal','Hapus jurnal ini?':'Delete this journal?','Jurnal {d} {m} {y} akan dihapus permanen. Skor mood hari itu tetap tersimpan.':'The journal for {m} {d}, {y} will be deleted permanently. That day’s mood score is kept.',
+  '← Lihat di dashboard':'← View on dashboard','Hapus jurnal':'Delete journal','Jurnal dihapus':'Journal deleted',
+  // Statistik
+  'KONSISTENSI HABIT':'HABIT CONSISTENCY','MOOD RATA-RATA':'AVERAGE MOOD','TREN {y}':'TREND {y}','Habit (konsistensi %)':'Habits (consistency %)','Mood (skor 1–{n})':'Mood (score 1–{n})',
+  'SCORE PER BULAN · {y}':'SCORE PER MONTH · {y}',' · geser →':' · swipe →','TAHUN':'YEAR','{n} bulan aktif':'{n} active months','Konsistensi habit':'Habit consistency','Mood rata-rata':'Average mood',
+  'tanpa data · mood pakai warna skor 1–{n}':'no data · mood uses the 1–{n} score colors','Bulan berjalan dihitung sampai hari ini. Bulan tanpa habit tidak dihitung sebagai kegagalan. Arahkan kursor ke nama habit untuk goal, count, dan jumlah bulan aktif.':'The current month counts up to today. Months without habits don’t count as misses. Hover a habit name to see its goal, count, and active months.',
+  'KONSISTENSI':'CONSISTENCY','Belum ada data di {y}':'No data in {y} yet','Score muncul setelah habit dicentang atau mood diisi di tahun ini.':'Scores show up once habits are checked or moods are logged this year.',
+  // Pengaturan
+  'Belum ada':'None yet','Struktur Sheet sehat. Tidak ada yang perlu diperbaiki.':'The Sheet structure is healthy. Nothing to fix.','Memeriksa…':'Checking…','Gagal: ':'Failed: ',
+  'Skala mood':'Mood scale','Ubah nama tiap skor atau tambah skor baru. Berlaku di seluruh halaman: dashboard, Input cepat, Jurnal, dan Statistik.':'Rename each score or add new ones. Applies everywhere: dashboard, Quick input, Journal, and Statistics.',
+  '+ Tambah skor {n}':'+ Add score {n}','Maksimal {n} skor':'Up to {n} scores','Kembalikan ke default':'Reset to default','Nama skor {n}':'Name for score {n}','Hapus skor {n}':'Remove score {n}',
+  'Skor {n} dipakai di {c} hari pada data yang terbuka. Hari itu akan tampil sebagai skor {p} sampai skor {n} ditambahkan lagi; data di Sheet tidak berubah.':'Score {n} is used on {c} days in the loaded data. Those days will show as score {p} until score {n} is added back; the data in the Sheet doesn’t change.',
+  'Ya, hapus skor {n}':'Yes, remove score {n}','skor {n}':'score {n}',
+  'Afirmasi hari ini':'Today’s affirmation','Afirmasi':'Affirmation','AFIRMASI HARI INI':'TODAY’S AFFIRMATION','AFIRMASI':'AFFIRMATION',
+  'Tulis afirmasi':'Write an affirmation','Lihat afirmasi':'View affirmation','Ada afirmasi':'Has an affirmation','Tampilkan afirmasi':'Show affirmations',
+  'Kalimat afirmasi terbaru diketik bergantian setelah sapaan.':'Your latest affirmation is typed sentence by sentence after the greeting.','Tampil':'Show','Sembunyi':'Hide',
+  'lalu afirmasi terbaru ({d} {m}):':'then the latest affirmation ({m} {d}):','Belum ada afirmasi. Tulis di Jurnal atau Input cepat.':'No affirmations yet. Write one in Journal or Quick input.',
+  'centang "{h}" {d} {m}':'check "{h}" {m} {d}','mood {d} {m}':'mood {m} {d}','tambah habit "{h}"':'add habit "{h}"','ubah habit "{h}"':'edit habit "{h}"','hapus habit "{h}"':'delete habit "{h}"',
+  'urutan habit':'habit order','salin habit':'copy habits','Input cepat {d} {m}':'Quick input {m} {d}','Dibatalkan: {a}':'Undone: {a}','Diulang: {a}':'Redone: {a}',
+  'Tidak ada yang bisa dibatalkan':'Nothing to undo','Tidak ada yang bisa diulang':'Nothing to redo','Semua perubahan sudah tersimpan':'All changes are saved',
+  'Pintasan keyboard':'Keyboard shortcuts','Batalkan perubahan terakhir':'Undo last change','Ulangi perubahan':'Redo change','Simpan sekarang':'Save now',
+  'Bulan sebelumnya / berikutnya':'Previous / next month','Tampilkan pintasan ini':'Show these shortcuts','Tutup jendela atau menu':'Close dialog or menu',
+  'Undo, redo, dan ganti bulan berlaku di Dashboard. Undo mencakup centang, mood, Input cepat, dan perubahan habit (maks. 50 langkah).':'Undo, redo and month switching work on the Dashboard. Undo covers checks, mood, Quick input and habit changes (up to 50 steps).',
+  // Input cepat
+  'Ada draft {d} {m} yang belum tersimpan.':'There’s an unsaved draft from {m} {d}.','Lanjutkan draft':'Continue draft','Buang':'Discard','Tidak ada habit yang dijadwalkan di tanggal ini.':'No habits are scheduled on this date.','Belum ada habit. Mood & jurnal tetap bisa diisi.':'No habits yet. You can still log mood & journal.',
+  '{n} habit tidak dijadwalkan di tanggal ini':'{n} habits not scheduled on this date','MOOD HARI INI':'TODAY’S MOOD','MOOD':'MOOD','JURNAL HARI INI':'TODAY’S JOURNAL','JURNAL':'JOURNAL','Gagal menyimpan. Coba lagi.':'Couldn’t save. Try again.','Isian kamu tidak hilang. Periksa koneksi internet.':'Your entries aren’t lost. Check your internet connection.',
+  'Hari sebelumnya':'Previous day','Hari berikutnya':'Next day','Hari ini · ':'Today · ','Tersimpan · dashboard diperbarui':'Saved · dashboard updated','Draft disimpan di perangkat ini':'Draft saved on this device',
+  // Form habit
+  'hari sekali':'days','kali seminggu':'times a week','kali sebulan':'times a month','kosong = semua hari':'empty = every day','kosong = semua minggu':'empty = every week','FREKUENSI':'FREQUENCY','HARI':'DAYS','HARI APA SAJA?':'WHICH DAYS?','MINGGU KE':'WEEKS','MINGGU KE BERAPA?':'WHICH WEEKS?','MULAI TANGGAL':'START DATE',
+  'NAMA HABIT':'HABIT NAME','mis. Baca buku 10 halaman':'e.g. Read 10 pages','Tambah habit':'Add habit','GOAL BULAN INI':'GOAL THIS MONTH','Simpan habit':'Save habit','PRATINJAU · {m} {y}':'PREVIEW · {m} {y}',
+  'dijadwalkan (garis putus = fleksibel, pilih sendiri)':'scheduled (dashed = flexible, you pick)','sudah lewat / sebelum tanggal mulai':'past / before start date',
+  'Otomatis':'Auto','Manual':'Manual','otomatis: {n}× · hanya bulan ini':'auto: {n}× · this month only','dihitung dari frekuensi':'calculated from frequency','KALENDER':'CALENDAR',
+  'Hapus "{name}"? {n} centang di {m} {y} ikut hilang. Bulan lain tidak berubah.':'Delete "{name}"? Its {n} checks in {m} {y} will be removed too. Other months don’t change.','Ya, hapus':'Yes, delete','Nama habit':'Habit name','Hapus habit':'Delete habit','Simpan perubahan':'Save changes',
+  'Habit "{n}" ditambahkan':'Habit "{n}" added','"{n}" dihapus dari {m} {y}':'"{n}" removed from {m} {y}','{n} habit disalin dari {m} {y}':'{n} habits copied from {m} {y}',
+  // Tambah tahun & Drive
+  'Membuat lembar {y}…':'Creating the {y} sheet…','12 bulan sedang dibuat di Google Sheet. Jangan tutup halaman ini.':'12 months are being created in Google Sheet. Don’t close this page.','{m} {y} ({n} habit, tanpa centang)':'{m} {y} ({n} habits, no checks)','Tambah tahun':'Add year',
+  'Salin daftar habit dari {src} ke Januari':'Copy the habit list from {src} to January','bulan terakhir {y}':'the last month of {y}','{y} sudah ada.':'{y} already exists.','Pilih tahun lain.':'Pick another year.','Akan dibuat: 12 lembar bulan, Januari–Desember {y}. Data tahun lain tidak berubah.':'This creates 12 month pages, January–December {y}. Other years don’t change.','Buat 12 bulan':'Create 12 months',
+  'Lembar {y} siap · 12 bulan':'{y} sheet ready · 12 months','Gagal membuat lembar {y}. ':'Couldn’t create the {y} sheet. ',
+  'Memuat dari Drive…':'Loading from Drive…','Load data dari Drive':'Load data from Drive','Belum ada data di Drive. Save dulu?':'There’s no data in Drive yet. Save first?','Save ke Drive':'Save to Drive','Load data dari Drive?':'Load data from Drive?',
+  'DI APLIKASI':'IN THE APP','terakhir diubah':'last changed','DI DRIVE':'IN DRIVE','terakhir disimpan':'last saved','Data di aplikasi akan diganti dengan versi Drive.':'The data in the app will be replaced with the Drive version.',' Perubahan sejak {t} akan hilang.':' Changes since {t} will be lost.',
+  'Simpan versi sekarang ke Drive sebagai cadangan dulu':'Save the current version to Drive as a backup first','Ganti dengan versi Drive':'Replace with Drive version',
+  'Menyimpan ke Google Drive…':'Saving to Google Drive…','Tersimpan ke Google Drive · {t}':'Saved to Google Drive · {t}','Belum tersimpan ke Drive: ':'Not saved to Drive: ','Data dari Google Drive dimuat':'Data loaded from Google Drive',
+  // Mock (pratinjau lokal)
+  'Gagal menyimpan (simulasi)':'Couldn’t save (simulated)','{y} sudah ada':'{y} already exists','Belum ada data di Drive':'There’s no data in Drive yet'
+};
+function tr(s,v){
+  const en=S.settings.lang==='en'&&EN[s]!=null;let o=en?EN[s]:s;
+  if(v)o=o.replace(/\{(\w+)\}/g,(m,k)=>v[k]!=null?v[k]:m);
+  // Bahasa Inggris: "1 habits" → "1 habit"
+  if(en)o=o.replace(/\b1 (habit|journal|day|change|month|check)s\b/g,'1 $1').replace(/\b1 entries\b/g,'1 entry');
+  return o;
+}
+let LANG_CUR=null;
+function applyLang(){
+  const k=S.settings.lang==='en'?'en':'id';if(LANG_CUR===k)return;LANG_CUR=k;const P=LANGS[k];
+  MID.splice(0,12,...P.mon);DAYID.splice(0,7,...P.day);DS.splice(0,7,...P.ds);SUGGEST.splice(0,SUGGEST.length,...P.sug);JPH=P.jph;APH=P.aph;
+}
+
+/* ═════════════ Skala mood (bisa diubah di Pengaturan, 2–10 skor) ═════════════ */
+const MAX_MOOD=10;
+const MOOD_STOPS=[[246,198,198],[248,213,181],[245,227,163],[207,232,196],[47,122,74]];
+const moodLabels=()=>{const c=S.settings.moods;return Array.isArray(c)&&c.length>=2?c:LANGS[LANG_CUR||'id'].mood;};
+const moodN=()=>moodLabels().length;
+const ML=v=>moodLabels()[v-1]||'';
+const moodLbl=v=>ML(v)?`${v}. ${ML(v)}`:String(v);
+const moodRange=()=>Array.from({length:moodN()},(_,i)=>i+1);
+// Warna skor: merah → kuning → hijau, dibagi rata sesuai jumlah skor (5 skor = warna template asli)
+function moodC(v){
+  const N=moodN();v=Math.min(Math.max(v,1),N);
+  const t=N>1?(v-1)/(N-1)*4:4,i=Math.min(3,Math.floor(t)),f=t-i,a=MOOD_STOPS[i],b=MOOD_STOPS[i+1];
+  const c=a.map((x,j)=>Math.round(x+(b[j]-x)*f)),lum=(0.299*c[0]+0.587*c[1]+0.114*c[2])/255;
+  return [`rgb(${c.join(',')})`,lum<0.55?'#fff':'#111'];
+}
+const LOGO='data:image/png;base64,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';
+const SVG=(d,w=20,sw=2)=>`<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+const IC={menu:'M4 6h16 M4 12h16 M4 18h16',up:'M12 15V4 M8 8l4-4 4 4 M5 14v5h14v-5',down:'M12 4v11 M8 11l4 4 4-4 M5 14v5h14v-5',copy:'M9 9h11v11H9z M5 15H4V4h11v1',cloud:'M7 18h10a4 4 0 0 0 .5-7.97A6 6 0 0 0 6 9.5 4.25 4.25 0 0 0 7 18z',globe:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M3 12h18 M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9 M12 3C9.5 5.7 8.2 8.7 8.2 12s1.3 6.3 3.8 9',moon:'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',sun:'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M12 2v2 M12 20v2 M4.9 4.9l1.4 1.4 M17.7 17.7l1.4 1.4 M2 12h2 M20 12h2 M4.9 19.1l1.4-1.4 M17.7 6.3l1.4-1.4'};
+// Amplop jurnal: tertutup (ada jurnal) / terbuka hijau (sedang dibuka)
+const envClosed=(w=18)=>`<svg class="env" width="${w}" height="${Math.round(w*14/18)}" viewBox="0 0 18 14"><rect x="1" y="1" width="16" height="12" rx="1.5" fill="none" stroke="var(--bg)" stroke-width="1.5"/><path d="M1.6 2l7.4 5.8L16.4 2" fill="none" stroke="var(--bg)" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const envOpen=(w=18)=>`<svg class="env" width="${w}" height="${Math.round(w*17/18)}" viewBox="0 0 18 17"><path d="M1 7.5L9 1.5l8 6V16H1z" fill="none" stroke="#5CB85C" stroke-width="1.6" stroke-linejoin="round"/><path d="M1 7.5l8 5 8-5" fill="none" stroke="#5CB85C" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+const MOOD_CELL=()=>[[0,tr('– kosongkan')],...moodRange().map(v=>[v,moodLbl(v)])];
+const MOOD_PILL=()=>[[0,tr('Mood –')],...moodRange().map(v=>[v,moodLbl(v)])];
+const optsHtml=(list,cur)=>list.map(([v,l])=>`<option value="${v}"${v===cur?' selected':''}>${l}</option>`).join('');
+
+/* Sapaan dashboard: diketik huruf per huruf, lanjut dari posisi terakhir walau halaman di-render ulang.
+   Setelah sapaan + pesan selesai, baris pesan berganti ke kalimat afirmasi terbaru, diketik satu per satu dan berputar terus. */
+const greetDefault=()=>LANGS[S.settings.lang==='en'?'en':'id'].greet;
+// ph: intro (sapaan+pesan diketik) → hold (teks utuh, jeda) → del (dihapus) → type (kalimat berikutnya) → hold … · idle = berhenti
+const TY={key:null,hi:'',msg:'',sents:[],ph:'idle',n:0,cur:'',c:0,i:0,af:false,t:null,done:false};
+const RM=()=>!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+// Baris 1 = sapaan nama (besar), baris 2 = pesan / afirmasi (lebih kecil)
+function greetParts(){const nm=(S.settings.name||'').trim(),ms=(S.settings.msg==null?greetDefault():S.settings.msg).trim();return {hi:S.settings.lang==='en'?(nm?`Hi, ${nm}!`:'Hi there!'):`Hai, ${nm||'kamu'}!`,msg:ms};}
+const tySents=()=>{if(!affOn())return [];const a=affLatest();return a?affSentences(a.t):[];};
+const greetText=()=>{const g=greetParts();return [g.hi,g.msg,...tySents()].filter(Boolean).join(' ');};
+const caret0=()=>`<i class="${TY.done?'off':''}"></i>`;
+// size: ukuran sapaan, pesan, dan jarak antarbaris (px)
+function greetHtml(size){
+  const g=greetParts(),key=g.hi+'\n'+g.msg;
+  if(TY.key!==key){
+    Object.assign(TY,{key,hi:g.hi,msg:g.msg,sents:tySents(),i:0,af:false,cur:g.msg,c:g.msg.length});
+    if(RM())tyStatic();else{Object.assign(TY,{ph:'intro',n:0,done:false});tyGo(55);}
+  }else tySync();
+  // Bayangan tak terlihat menahan tinggi kotak = teks terpanjang, supaya tata letak tidak melompat saat kalimat berganti
+  const l2=[TY.msg,...TY.sents.map(x=>'\u0001'+x),...(RM()&&TY.sents.length>1?['\u0001'+TY.sents.join(' ')]:[])].filter(x=>x&&x!=='\u0001');
+  const ghost=`<span class="gh">${esc(TY.hi)}</span>${l2.length?`<span class="gm gst">${l2.map(x=>x[0]==='\u0001'?`<span class="af">${esc(x.slice(1))}</span>`:`<span>${esc(x)}</span>`).join('')}</span>`:''}`;
+  return `<span class="gr" style="--gh:${size[0]}px;--gm:${size[1]}px;--gg:${size[2]}px"><span class="ghost" aria-hidden="true">${ghost}</span><span class="vis" aria-label="${esc(greetText())}" data-typer>${greetInner()}</span></span>`;
+}
+function greetInner(){
+  const intro=TY.ph==='intro',h=TY.hi.length,n=TY.n,hasL2=!!(TY.msg||TY.sents.length||TY.cur);
+  const hi=intro?TY.hi.slice(0,n):TY.hi,l2=intro?TY.msg.slice(0,Math.max(0,n-h)):TY.cur.slice(0,TY.c);
+  const at=intro&&(n<h||!TY.msg)?0:(hasL2?1:0);
+  return `<span class="gh">${esc(hi)}${at===0?caret0():''}</span>${hasL2?`<span class="gm${TY.af&&!intro?' af':''}">${esc(l2)}${at===1?caret0():''}</span>`:''}`;
+}
+function paintGreet(){document.querySelectorAll('[data-typer]').forEach(e=>e.innerHTML=greetInner());}
+function tyGo(ms){clearTimeout(TY.t);TY.t=setTimeout(tyStep,ms);}
+function tyStatic(){clearTimeout(TY.t);const s=TY.sents;Object.assign(TY,{ph:'idle',done:true,cur:s.length?s.join(' '):TY.msg,af:!!s.length});TY.c=TY.cur.length;}
+function tyStep(){
+  const S2=TY.sents;
+  switch(TY.ph){
+    case 'intro':{const len=TY.hi.length+TY.msg.length;TY.n++;
+      if(TY.n>=len){Object.assign(TY,{n:len,ph:'hold',cur:TY.msg,c:TY.msg.length,af:false});tyGo(S2.length?2600:1800);}else tyGo(55);break;}
+    case 'hold':
+      // Tanpa afirmasi: berhenti di pesan. Satu kalimat: berhenti di kalimat itu. Lebih dari satu: lanjut berputar.
+      if(!S2.length&&!TY.af&&TY.cur===TY.msg){TY.ph='idle';TY.done=true;}
+      else if(S2.length===1&&TY.af&&TY.cur===S2[0]){TY.ph='idle';TY.done=true;}
+      else{TY.ph='del';TY.done=false;tyGo(0);}
+      break;
+    case 'del':
+      if(TY.c>0){TY.c--;tyGo(22);break;}
+      if(S2.length){TY.i%=S2.length;TY.cur=S2[TY.i];TY.i=(TY.i+1)%S2.length;TY.af=true;}else{TY.cur=TY.msg;TY.af=false;}
+      TY.ph='type';tyGo(350);break;
+    case 'type':
+      if(TY.c<TY.cur.length){TY.c++;tyGo(50);break;}
+      TY.ph='hold';tyGo(TY.af?Math.max(2800,TY.cur.length*70):1800);break;
+  }
+  paintGreet();
+}
+// Dipanggil saat afirmasi / saklar berubah: perbarui daftar kalimat tanpa mengulang ketikan sapaan
+function tySync(){
+  if(TY.key==null)return;
+  const s=tySents();if(JSON.stringify(s)===JSON.stringify(TY.sents))return;
+  TY.sents=s;if(TY.i>=s.length)TY.i=0;
+  if(RM()){tyStatic();paintGreet();return;}
+  if(TY.ph==='idle'){TY.ph='hold';TY.done=false;tyGo(600);}
+}
+
+/* ═════════════ Server (Apps Script) atau mock lokal ═════════════ */
+const HAS_GAS=!!(window.google&&google.script&&google.script.run);
+function call(fn,...args){
+  if(HAS_GAS)return new Promise((res,rej)=>google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...args));
+  return Mock[fn](...args);
+}
+
+/* Mock: dipakai saat Index.html dibuka di luar Apps Script (pratinjau lokal).
+   ?demo = isi data contoh · ?reset = kosongkan · ?fail = simulasi gagal simpan */
+const Mock=(()=>{
+  const KEY='hb-mock-v1';
+  let db=null;
+  try{db=JSON.parse(localStorage.getItem(KEY));}catch(e){}
+  if(qs.has('reset')||!db)db={years:{},journal:{},affirm:{},settings:{},lastModified:null,backup:null,backupAt:null};
+  db.affirm=db.affirm||{};
+  const emptyYear=()=>Array.from({length:12},()=>({habits:[],checks:{},mood:Array(31).fill(0)}));
+  const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}};
+  const out=(v,ms=250)=>new Promise((res,rej)=>setTimeout(()=>v instanceof Error?rej(v):res(JSON.parse(JSON.stringify(v))),ms));
+  const yearsList=()=>Object.keys(db.years).map(Number).sort((a,b)=>a-b);
+  const yearOut=y=>{const journal={},affirm={};Object.keys(db.journal).forEach(k=>{if(k.startsWith(y+'-'))journal[k]=db.journal[k];});Object.keys(db.affirm).forEach(k=>{if(k.startsWith(y+'-'))affirm[k]=db.affirm[k];});return {year:+y,months:db.years[y],journal,affirm};};
+  const affLatest=()=>{const T=today(),tk=dkey(T.y,T.m,T.d),ks=Object.keys(db.affirm).filter(k=>k<=tk&&db.affirm[k]).sort();const k=ks[ks.length-1];return k?{date:k,text:db.affirm[k]}:null;};
+  if(qs.has('demo')&&!yearsList().length){
+    const T=today(),y=T.y,months=emptyYear();
+    const H=[['Bangun jam 4 pagi',.77,{type:'daily'}],['Minum 1 gelas air',.97,{type:'daily'}],['Jamaah Subuh',.83,{type:'daily'}],['Gym',.8,{type:'perWeek',n:3,days:[1,3,5]}],['Masak sarapan',.6,{type:'daily',days:[1,2,3,4,5]}],['Deep work',.85,{type:'daily',days:[1,2,3,4,5]}],['Journalling',.7,{type:'everyN',n:2}],['No Smoking',.75,{type:'daily'}],['No PMO',1.01,{type:'daily'}],['Screen time max 2 jam',.63,{type:'daily'}]]
+      .map(([name,rate,f],i)=>({id:'demo'+i,name,f:{days:[],weeks:[],...f},start:'',goal:null,rate}));
+    const JT=['Pagi lancar, deep work 2 jam tanpa distraksi. Besok tidur sebelum jam 9 supaya bisa bangun jam 4 lagi.','Gym terlewat karena lembur. Besok bawa baju ganti ke kantor.','Hari tenang. Masak sarapan berhasil lagi, tiga hari berturut-turut.','Screen time kebablasan malam ini. Besok HP ditaruh di luar kamar setelah Isya.','Subuh berjamaah, energi bagus sampai sore. Jurnal ditulis sebelum tidur.'];
+    for(let m=0;m<=T.m;m++){
+      const M=months[m],last=m<T.m?dim(y,m):T.d;
+      M.habits=H.map(({rate,...h})=>({...h,start:h.id==='demo7'&&m===T.m?dkey(y,m,8):''}));
+      H.forEach(h=>{M.checks[h.id]=Array.from({length:31},(_,i)=>i<last&&rnd(y,m,+h.id.slice(4),i+1)<h.rate);});
+      for(let d=1;d<=last;d++){M.mood[d-1]=1+Math.floor(rnd(y,m,99,d)*5);if(rnd(y,m,77,d)<.55)db.journal[dkey(y,m,d)]=JT[Math.floor(rnd(y,m,55,d)*JT.length)];}
+    }
+    const ak=dkey(y,T.m,Math.max(1,T.d-2));db.affirm[ak]='Aku mampu konsisten. Aku pantas bahagia! Hari ini aku memilih tenang.';
+    if(!db.journal[ak])db.journal[ak]=JT[0];
+    db.years[y]=months;db.lastModified=Date.now();persist();
+  }
+  const apply=op=>{
+    if(op.t==='journal'){if(op.text)db.journal[op.date]=op.text;else delete db.journal[op.date];return;}
+    if(op.t==='affirm'){if(op.text)db.affirm[op.date]=op.text;else delete db.affirm[op.date];return;}
+    if(op.t==='settings'){db.settings=op.settings;return;}
+    const Y=db.years[op.y];if(!Y)return;const M=Y[op.m];
+    if(op.t==='check'){if(!M.habits.some(h=>h.id===op.id))return;(M.checks[op.id]=M.checks[op.id]||Array(31).fill(false))[op.d-1]=!!op.v;}
+    else if(op.t==='mood')M.mood[op.d-1]=op.v||0;
+    else if(op.t==='habits'){const old=M.checks;M.habits=op.habits;M.checks={};op.habits.forEach(h=>M.checks[h.id]=old[h.id]||Array(31).fill(false));}
+  };
+  const failing=()=>qs.has('fail')||window.hbFail;
+  return {
+    getInitial:y=>out({user:'demo@lokal',years:yearsList(),settings:db.settings,lastModified:db.lastModified,backupAt:db.backupAt,affLatest:affLatest(),data:db.years[y]?yearOut(y):null},400),
+    getYear:y=>out(db.years[y]?yearOut(y):new Error(tr('Lembar {y} belum ada',{y}))),
+    applyOps:ops=>{if(failing())return out(new Error(tr('Gagal menyimpan (simulasi)')),700);ops.forEach(apply);db.lastModified=Date.now();persist();return out({savedAt:db.lastModified},350);},
+    createYear:(y,copy)=>{
+      if(db.years[y])return out(new Error(tr('{y} sudah ada',{y})));
+      const months=emptyYear();
+      if(copy){const prev=yearsList().filter(v=>v<y).reverse();outer:for(const py of prev)for(let m=11;m>=0;m--){const hs=db.years[py][m].habits;if(hs.length){months[0].habits=JSON.parse(JSON.stringify(hs));hs.forEach(h=>months[0].checks[h.id]=Array(31).fill(false));break outer;}}}
+      db.years[y]=months;db.lastModified=Date.now();persist();return out(yearOut(y),1200);
+    },
+    saveBackup:()=>{db.backup=JSON.stringify({years:db.years,journal:db.journal,affirm:db.affirm,settings:db.settings});db.backupAt=Date.now();persist();return out({backupAt:db.backupAt},600);},
+    getBackupInfo:()=>out({exists:!!db.backup,driveAt:db.backupAt,appAt:db.lastModified}),
+    loadBackup:()=>{if(!db.backup)return out(new Error(tr('Belum ada data di Drive')));const b=JSON.parse(db.backup);Object.assign(db.years,b.years);db.journal=b.journal;db.affirm=b.affirm||{};db.settings=b.settings;db.lastModified=Date.now();persist();return out({ok:true},700);},
+    repairStructure:()=>out({report:[]},600)
+  };
+})();
+
+/* ═════════════ State ═════════════ */
+const T0=today();
+const S={
+  ready:false,error:'',user:'',years:[],settings:{lang:'id',theme:'light'},cache:{},loading:{},
+  y:T0.y,m:T0.m,page:'dashboard',menu:false,modal:null,toast:'',
+  jSel:{},jNew:null,slide:{},skipCopy:{},copyChoice:'copy',dragFrom:null,
+  jp:{year:T0.y,sel:null,confirm:false,edit:false},
+  st:{year:T0.y,showH:true,showM:true},
+  lastModified:null,backupAt:null,repair:null,repairBusy:false,affLatest:null
+};
+try{S.skipCopy=JSON.parse(localStorage.getItem('hb-skip-copy'))||{};}catch(e){}
+applyLang();
+
+const month=(y,m)=>S.cache[y]&&S.cache[y].months[m];
+const isOn=(y,m,id,d)=>{const M=month(y,m);return !!(M&&M.checks[id]&&M.checks[id][d-1]);};
+// Skor di atas skala aktif (mis. skor 7 setelah skala diperkecil) tampil sebagai skor tertinggi
+const moodOf=(y,m,d)=>{const M=month(y,m);return M?Math.min(M.mood[d-1]||0,moodN()):0;};
+const jOf=k=>{const Y=S.cache[+k.slice(0,4)];return Y?Y.journal[k]||'':'';};
+const aOf=k=>{const Y=S.cache[+k.slice(0,4)];return Y&&Y.affirm?Y.affirm[k]||'':'';};
+// Afirmasi dari tanggal paling akhir (sampai hari ini) yang punya afirmasi: data tahun yang sudah dimuat + petunjuk dari server
+function affLatest(){
+  const T=today(),tk=dkey(T.y,T.m,T.d);let best=null;
+  const see=(k,t)=>{if(t&&t.trim()&&k<=tk&&(!best||k>best.k))best={k,t};};
+  Object.values(S.cache).forEach(Y=>Object.entries(Y.affirm||{}).forEach(([k,t])=>see(k,t)));
+  const L=S.affLatest;if(L&&!S.cache[+L.date.slice(0,4)])see(L.date,L.text);
+  return best;
+}
+// Satu kalimat = diakhiri . ! atau ? (baris baru juga memisahkan kalimat)
+const affSentences=t=>(t||'').split(/\n+/).flatMap(l=>l.match(/[^.!?]+[.!?]+["'”’)]*|[^.!?]+$/g)||[]).map(x=>x.trim()).filter(x=>x.replace(/[.!?"'”’)\s]/g,''));
+const affOn=()=>S.settings.affOn!==false;
+
+/* ═════════════ Jadwal & goal ═════════════ */
+function sched(hb,y,m,d){
+  const t=new Date(y,m,d),f=hb.f;
+  if(hb.start&&t<parseD(hb.start))return false;
+  const wk=Math.floor((d-1)/7)+1;
+  if(f.weeks&&f.weeks.length&&!f.weeks.includes(wk))return false;
+  if(f.days&&f.days.length&&!f.days.includes(t.getDay()))return false;
+  if(f.type==='everyN'){const s=hb.start?parseD(hb.start):new Date(2000,0,1);return Math.round((t-s)/864e5)%Math.max(1,f.n)===0;}
+  return true;
+}
+function goalRange(hb,y,m,a,b){
+  const f=hb.f,N=dim(y,m);
+  if(hb.goal&&a===1&&b===N)return hb.goal;
+  const sd=[];for(let d=a;d<=b;d++)if(sched(hb,y,m,d))sd.push(d);
+  if(f.type==='perWeek'){let g=0;for(let w=0;w<5;w++)g+=Math.min(f.n,sd.filter(d=>Math.floor((d-1)/7)===w).length);return g;}
+  if(f.type==='perMonth'){let full=0;for(let d=1;d<=N;d++)if(sched(hb,y,m,d))full++;const tot=Math.min(f.n,full);if(a===1&&b===N)return tot;return Math.min(sd.length,Math.ceil(tot*sd.length/Math.max(1,full)));}
+  return sd.length;
+}
+function countRange(hb,y,m,a,b){let c=0;for(let d=a;d<=b;d++)if(sched(hb,y,m,d)&&isOn(y,m,hb.id,d))c++;return c;}
+// Hari terakhir yang sudah lewat di bulan itu (99 = bulan lampau, 0 = bulan depan)
+function lastDay(y,m){const T=today();return (y<T.y||(y===T.y&&m<T.m))?99:(y===T.y&&m===T.m?T.d:0);}
+
+function monthCalc(y,m){
+  const M=month(y,m),H=M?M.habits:[],n=dim(y,m);
+  const rows=H.map((hb,i)=>{let count=0;const cells=[];
+    for(let d=1;d<=n;d++){const sc=sched(hb,y,m,d),on=sc&&isOn(y,m,hb.id,d);if(on)count++;cells.push({sc,on});}
+    const goal=goalRange(hb,y,m,1,n),pct=goal?Math.min(100,Math.round(count/goal*100)):0;
+    return {hb,i:i+1,cells,count,goal,pct};});
+  const days=[];let total=0,goalSum=0;
+  rows.forEach(r=>{total+=Math.min(r.count,r.goal);goalSum+=r.goal;});
+  for(let d=1;d<=n;d++){let c=0,sc=0;rows.forEach(r=>{const x=r.cells[d-1];if(x.sc)sc++;if(x.on)c++;});
+    days.push({d,c,sc,pct:sc?Math.round(c/sc*100):0,mood:moodOf(y,m,d),hasJ:!!(jOf(dkey(y,m,d))||aOf(dkey(y,m,d)))});}
+  const top=[...rows].sort((a,b)=>b.pct-a.pct||b.count-a.count).slice(0,10);
+  return {n,rows,days,total,goalSum,p:goalSum?total/goalSum:0,top};
+}
+
+/* ═════════════ Antrean simpan (optimistic UI, digabung jadi satu panggilan) ═════════════ */
+const Q={ops:new Map(),inflight:null,timer:null,tries:0,failed:false};
+function enqueue(key,op,delay){Q.ops.set(key,op);if(Q.failed){Q.failed=false;Q.tries=0;}schedule(delay);refreshInd();}
+function schedule(delay=1200){clearTimeout(Q.timer);Q.timer=setTimeout(()=>{Q.timer=null;flush();},delay);}
+async function flush(){
+  if(Q.inflight||!Q.ops.size)return;
+  clearTimeout(Q.timer);Q.timer=null;
+  const batch=[...Q.ops.entries()];Q.ops.clear();Q.inflight=new Set(batch.map(b=>b[0]));render();
+  try{
+    const r=await call('applyOps',batch.map(b=>b[1]));
+    Q.inflight=null;Q.tries=0;Q.failed=false;S.lastModified=r&&r.savedAt||Date.now();
+  }catch(e){
+    Q.inflight=null;
+    const merged=new Map();batch.forEach(([k,op])=>{if(!Q.ops.has(k))merged.set(k,op);});Q.ops.forEach((op,k)=>merged.set(k,op));Q.ops=merged;
+    Q.tries++;if(Q.tries>=3)Q.failed=true;else schedule(1500*Q.tries);
+  }
+  render();
+  if(Q.ops.size&&!Q.failed&&!Q.timer)schedule();
+}
+function retryNow(){Q.failed=false;Q.tries=0;flush();}
+function cellState(key){if(Q.inflight&&Q.inflight.has(key))return 'saving';if(Q.ops.has(key))return Q.failed?'failed':Q.tries>0?'pending':'';return '';}
+function saveState(){return Q.failed?'failed':Q.inflight?'saving':Q.ops.size?(Q.tries>0?'pending':'saving'):'';}
+function indHtml(compact){
+  const st=saveState();
+  // HP: ikon awan dengan titik status; ketuk saat gagal = coba lagi
+  if(compact){const lb={failed:tr('Gagal menyimpan · ketuk untuk coba lagi'),saving:tr('Menyimpan…'),pending:tr('Belum tersimpan · {n} perubahan',{n:Q.ops.size}),'':tr('Tersimpan ke Google Sheet')}[st];
+    return `<button class="cloud ${st}" ${st==='failed'?'data-a="retry"':'data-a="noop"'} title="${lb}" aria-label="${lb}">${SVG(IC.cloud,22,1.8)}<b></b></button>`;}
+  if(st==='failed')return `<span class="ind failed"><i></i>${tr('Gagal menyimpan')} · <button data-a="retry">${tr('Coba lagi')}</button></span>`;
+  if(st==='saving')return `<span class="ind saving"><i></i>${tr('Menyimpan…')}</span>`;
+  if(st==='pending')return `<span class="ind pending"><i></i>${tr('Belum tersimpan · {n} perubahan',{n:Q.ops.size})}</span>`;
+  return `<span class="ind" title="${tr('Tersimpan ke Google Sheet')}"><i></i>${tr('Tersimpan')}</span>`;
+}
+function refreshInd(){document.querySelectorAll('[data-ind]').forEach(e=>e.innerHTML=indHtml(e.dataset.ind==='c'));}
+window.addEventListener('beforeunload',e=>{if(Q.ops.size||Q.inflight){e.preventDefault();e.returnValue='';}});
+
+/* ═════════════ Mutasi data ═════════════ */
+function toggleCheck(y,m,id,d){
+  const M=month(y,m);if(!M)return;const h=M.habits.find(x=>x.id===id);
+  record(tr('centang "{h}" {d} {m}',{h:h?h.name:'',d,m:MID[m]}),[[y,m]],()=>{
+    const a=M.checks[id]||(M.checks[id]=Array(31).fill(false));a[d-1]=!a[d-1];
+    enqueue(`c:${y}-${m}-${id}-${d}`,{t:'check',y,m,id,d,v:a[d-1]});});
+  render();
+}
+function setMood(y,m,d,v){const M=month(y,m);if(!M)return;record(tr('mood {d} {m}',{d,m:MID[m]}),[[y,m]],()=>{M.mood[d-1]=v;enqueue(`mo:${y}-${m}-${d}`,{t:'mood',y,m,d,v});});render();}
+function setJournal(k,text){const Y=S.cache[+k.slice(0,4)];if(!Y)return;if(text)Y.journal[k]=text;else delete Y.journal[k];enqueue('j:'+k,{t:'journal',date:k,text},1500);}
+function setAffirm(k,text){const Y=S.cache[+k.slice(0,4)];if(!Y)return;const A=Y.affirm||(Y.affirm={});if(text&&text.trim())A[k]=text;else delete A[k];enqueue('a:'+k,{t:'affirm',date:k,text:text&&text.trim()?text:''},1500);tySync();}
+function setHabits(y,m,habits){
+  const M=month(y,m);if(!M)return;
+  const old=M.checks;M.habits=habits;M.checks={};habits.forEach(h=>M.checks[h.id]=old[h.id]||Array(31).fill(false));
+  enqueue(`h:${y}-${m}`,{t:'habits',y,m,habits:habits.map(h=>({id:h.id,name:h.name,f:h.f,goal:h.goal||null,start:h.start||''}))},400);
+}
+function saveSettings(p){Object.assign(S.settings,p);enqueue('set',{t:'settings',settings:{...S.settings}},300);render();}
+function setGreet(k,v){S.settings[k]=v;enqueue('set',{t:'settings',settings:{...S.settings}},1200);render();}
+
+/* ═════════════ Undo / redo ═════════════ */
+// Tiap langkah menyimpan potret bulan (habit, centang, mood) + jurnal terkait sebelum & sesudah perubahan.
+// Undo/redo memulihkan potret itu lalu mengantrekan selisihnya ke Sheet lewat antrean simpan yang sama.
+const H={u:[],r:[]},H_MAX=50;
+const snapM=(y,m)=>{const M=month(y,m);return M?JSON.parse(JSON.stringify({habits:M.habits,checks:M.checks,mood:M.mood})):null;};
+function record(label,months,fn,jkeys=[]){
+  const take=()=>({m:months.map(([y,m])=>[y,m,snapM(y,m)]),j:jkeys.map(k=>[k,jOf(k),aOf(k)])});
+  const before=take();fn();const after=take();
+  if(JSON.stringify(before)===JSON.stringify(after))return;
+  H.u.push({label,before,after});if(H.u.length>H_MAX)H.u.shift();H.r=[];
+}
+// Op dipindah ke akhir antrean supaya urutannya benar (habit dipulihkan dulu, baru centangnya).
+function enqueueLast(key,op,delay){Q.ops.delete(key);enqueue(key,op,delay);}
+function restoreTo(st){
+  st.m.forEach(([y,m,t])=>{const M=month(y,m);if(!M||!t)return;
+    if(JSON.stringify(M.habits)!==JSON.stringify(t.habits)){M.habits=t.habits;
+      enqueueLast(`h:${y}-${m}`,{t:'habits',y,m,habits:t.habits.map(h=>({id:h.id,name:h.name,f:h.f,goal:h.goal||null,start:h.start||''}))});}
+    const old=M.checks;M.checks={};
+    t.habits.forEach(h=>{const a=t.checks[h.id]||Array(31).fill(false),b=old[h.id]||[];M.checks[h.id]=a;
+      a.forEach((v,i)=>{if(!!v!==!!b[i])enqueueLast(`c:${y}-${m}-${h.id}-${i+1}`,{t:'check',y,m,id:h.id,d:i+1,v:!!v});});});
+    t.mood.forEach((v,i)=>{if(v!==M.mood[i]){M.mood[i]=v;enqueueLast(`mo:${y}-${m}-${i+1}`,{t:'mood',y,m,d:i+1,v});}});
+  });
+  st.j.forEach(([k,txt,af])=>{const Y=S.cache[+k.slice(0,4)];if(!Y)return;
+    if(txt!==jOf(k)){if(txt)Y.journal[k]=txt;else delete Y.journal[k];enqueueLast('j:'+k,{t:'journal',date:k,text:txt},300);}
+    af=af||'';if(af!==aOf(k)){const A=Y.affirm||(Y.affirm={});if(af)A[k]=af;else delete A[k];enqueueLast('a:'+k,{t:'affirm',date:k,text:af},300);}});
+  tySync();
+  const f=st.m[0];if(f){S.y=f[0];S.m=f[1];}
+}
+function undo(){const e=H.u.pop();if(!e){toast(tr('Tidak ada yang bisa dibatalkan'));return;}restoreTo(e.before);H.r.push(e);toast(tr('Dibatalkan: {a}',{a:e.label}));}
+function redo(){const e=H.r.pop();if(!e){toast(tr('Tidak ada yang bisa diulang'));return;}restoreTo(e.after);H.u.push(e);toast(tr('Diulang: {a}',{a:e.label}));}
+function stepMonth(dir){let y=S.y,m=S.m+dir;if(m<0){m=11;y--;}else if(m>11){m=0;y++;}if(!S.years.includes(y))return;S.y=y;S.m=m;render();}
+async function saveNow(){
+  if(!Q.ops.size&&!Q.inflight){toast(tr('Semua perubahan sudah tersimpan'));return;}
+  if(Q.failed){retryNow();return;}
+  await flushNow();if(!Q.ops.size&&!Q.failed)toast(tr('Tersimpan ke Google Sheet'));
+}
+
+/* ═════════════ Muat data ═════════════ */
+function ensureYear(y){
+  if(!S.years.includes(y)||S.cache[y]||S.loading[y])return;
+  S.loading[y]=true;
+  call('getYear',y).then(d=>{S.cache[y]=d;}).catch(e=>toast(tr('Gagal memuat {y}',{y})+': '+msg(e))).finally(()=>{S.loading[y]=false;render();});
+}
+const msg=e=>(e&&(e.message||e.toString()))||'error';
+async function init(){
+  S.error='';render();
+  try{
+    const r=await call('getInitial',T0.y);
+    S.user=r.user;S.years=r.years.map(Number);S.settings={lang:'id',theme:'light',...(r.settings||{})};
+    S.lastModified=r.lastModified;S.backupAt=r.backupAt;S.affLatest=r.affLatest||null;
+    if(r.data)S.cache[T0.y]=r.data;
+    S.ready=true;
+  }catch(e){S.error=msg(e);}
+  render();
+}
+let toastT;
+function keysHtml(){
+  const mac=/Mac|iP(hone|ad|od)/.test(navigator.platform||navigator.userAgent),c=mac?'⌘':'Ctrl';
+  const rows=[[[c,'Z'],tr('Batalkan perubahan terakhir')],[[c,'Shift','Z'],tr('Ulangi perubahan')],...(mac?[]:[[['Ctrl','Y'],tr('Ulangi perubahan')]]),
+    [[c,'S'],tr('Simpan sekarang')],[['←','→'],tr('Bulan sebelumnya / berikutnya')],[['?'],tr('Tampilkan pintasan ini')],[['Esc'],tr('Tutup jendela atau menu')]];
+  return wrapModal(`<div class="phead"><h2>${tr('Pintasan keyboard')}</h2>${xBtn()}</div>
+    <div style="padding:16px 20px 22px;display:flex;flex-direction:column;gap:10px">${rows.map(([ks,l])=>`<div class="row" style="justify-content:space-between;gap:16px;font-size:14px"><span>${l}</span><span class="row" style="gap:4px;flex:none">${ks.map(x=>`<kbd class="kbd">${x}</kbd>`).join('')}</span></div>`).join('')}
+    <p class="muted" style="font-size:12px;margin:6px 0 0;line-height:1.5">${tr('Undo, redo, dan ganti bulan berlaku di Dashboard. Undo mencakup centang, mood, Input cepat, dan perubahan habit (maks. 50 langkah).')}</p></div>`,440);
+}
+function toast(s){clearTimeout(toastT);S.toast=s;render();toastT=setTimeout(()=>{S.toast='';render();},2800);}
+
+/* ═════════════ Render ═════════════ */
+function render(){
+  const a=document.activeElement,fid=a&&a.id,ss=a&&a.selectionStart,se=a&&a.selectionEnd;
+  const scr={};document.querySelectorAll('[data-keep]').forEach(e=>scr[e.dataset.keep]=e.scrollTop);
+  applyLang();
+  document.documentElement.dataset.theme=S.settings.theme==='dark'?'dark':'light';
+  document.documentElement.lang=S.settings.lang==='en'?'en':'id';
+  $app.innerHTML=pageHtml()+menuHtml()+modalHtml()+(S.toast?`<div class="toast">${esc(S.toast)}</div>`:'');
+  document.querySelectorAll('[data-keep]').forEach(e=>{if(scr[e.dataset.keep])e.scrollTop=scr[e.dataset.keep];});
+  const m7=document.querySelector('[data-m7]');
+  if(m7){const sl=m7.querySelector('.sl');if(sl)m7.scrollLeft=(+m7.dataset.m7)*sl.offsetWidth;}
+  if(fid){const el=document.getElementById(fid);if(el){el.focus({preventScroll:true});try{if(ss!=null)el.setSelectionRange(ss,se);}catch(e){}}}
+}
+function pageHtml(){
+  if(!S.ready)return S.error
+    ?`<div class="center" style="min-height:100vh;padding:24px"><b style="font-size:20px">${tr('Aplikasi gagal dimuat')}</b><span class="muted" style="max-width:420px">${esc(S.error)}</span><span class="muted" style="font-size:13px;max-width:420px">${tr('Pastikan kamu masuk dengan akun Google pemilik salinan sheet, lalu coba lagi.')}</span><button class="btn g" data-a="init">${tr('Coba lagi')}</button></div>`
+    :`<div class="center" style="min-height:100vh"><div class="spin"></div><span class="muted" style="font-size:13px">${tr('Memuat Habit Builder…')}</span></div>`;
+  if(S.page==='journal')return viewJournal();
+  if(S.page==='stats')return viewStats();
+  if(S.page==='settings')return viewSettings();
+  return viewDash();
+}
+const hamHtml=()=>`<button class="ham" data-a="menu" aria-label="Menu" title="Menu">${SVG(IC.menu)}</button>`;
+// Header semua halaman (laptop 72px, HP 56px): ☰ + judul + isi kanan
+const topbar=(title,right)=>`<div class="topbar">${hamHtml()}<h1>${esc(title)}</h1>${right||''}</div>`;
+const loadingBlock=()=>`<div class="center" style="padding:80px 0"><div class="spin"></div></div>`;
+function yearOptions(sel,withAdd){return S.years.map(v=>`<option value="${v}"${v===sel?' selected':''}>${v}</option>`).join('')+(S.years.includes(sel)?'':`<option value="${sel}" selected>${sel}</option>`)+(withAdd?`<option value="add">${tr('+ Tambah tahun')}</option>`:'');}
+function monthOptions(sel,short,idn){return (idn?MID:MONTHS).map((x,i)=>`<option value="${i}"${i===sel?' selected':''}>${short?x.slice(0,3):x}</option>`).join('');}
+function moodChip(s){if(!s)return `<span class="chip" style="background:var(--line)">${tr('Mood –')}</span>`;const [bg,fg]=moodC(s);return `<span class="chip" style="background:${bg};color:${fg}">${esc(moodLbl(s))}</span>`;}
+// Lebih dari 5 skor → dua baris supaya label tetap terbaca di HP
+function moodGrid(cur,act,extra=''){const N=moodN();return `<div class="moodgrid" style="grid-template-columns:repeat(${N<=5?N:Math.ceil(N/2)},1fr)">${moodRange().map(v=>{const on=cur===v,[bg,fg]=moodC(v);return `<button data-a="${act}" data-v="${v}" ${extra} style="${on?`background:${bg};color:${fg};border:2px solid var(--fg)`:''}"><b>${v}</b><span>${esc(ML(v))}</span></button>`;}).join('')}</div>`;}
+
+/* ── Dashboard ── */
+function viewDash(){
+  const {y}=S;
+  if(!S.years.includes(y))return dashHead()+yearMissing(y);
+  if(!S.cache[y]){ensureYear(y);return dashHead()+loadingBlock();}
+  return dashHead()+(isMobile()?dashMobile():dashDesktop());
+}
+// Laptop: status simpan berupa pil; HP: ikon awan. Bulan HP pakai singkatan Indonesia.
+function dashHead(){
+  const mob=isMobile();
+  return topbar(t('dashT'),`<div class="sp hide-m"></div>${mob?`<span data-ind="c">${indHtml(true)}</span>`:`<span data-ind>${indHtml()}</span>`}
+    <div class="row" style="gap:${mob?4:8}px"><select class="hsel" data-c="month" aria-label="${tr('Bulan')}">${monthOptions(S.m,true,mob)}</select><select class="hsel" data-c="year" aria-label="${tr('Tahun')}" style="width:${mob?70:100}px">${yearOptions(S.y,true)}</select></div>`);
+}
+function yearMissing(y){
+  const prev=[...S.years].reverse().find(v=>v<y)||S.years[S.years.length-1],mob=isMobile();
+  return `<div class="center" style="padding:${mob?'90px 20px':'70px 24px'}">
+    <div style="font-weight:800;font-size:72px;letter-spacing:.06em;color:transparent;-webkit-text-stroke:2px var(--fg);line-height:1">${y}</div>
+    <div style="font-weight:800;font-size:24px">${tr('Lembar {y} belum ada',{y})}</div>
+    <div class="muted" style="max-width:380px;font-size:14px;line-height:1.5">${tr('Buat lembar {y} untuk mulai mencatat. 12 bulan (Januari–Desember) dibuat sekaligus.',{y})}${prev?tr(' Data {p} tetap aman.',{p:prev}):''}</div>
+    <div style="display:flex;gap:10px;${mob?'flex-direction:column;align-self:stretch':''}"><button class="btn g lg" data-a="createYear" data-y="${y}">${tr('Buat lembar {y}',{y})}</button>${prev&&prev!==y?`<button class="btn lg" data-a="goYear" data-y="${prev}">${tr('Lihat {p}',{p:prev})}</button>`:''}</div>
+  </div>`;
+}
+// Data yang dipakai bersama oleh dashboard laptop (1a) dan HP (7a)
+function dashCtx(){
+  const {y,m}=S,C=monthCalc(y,m),T=today(),isCur=y===T.y&&m===T.m,ym=`${y}-${m}`;
+  const latest=[...C.days].reverse().find(x=>x.hasJ);
+  const jd=S.jSel[ym]!=null?S.jSel[ym]:(latest?latest.d:null);
+  const hasHabits=C.rows.length>0,copySrc=hasHabits?null:findCopySource(y,m);
+  return {C,T,isCur,ym,ld:lastDay(y,m),jd,hasHabits,copySrc,showCopy:!!copySrc&&!S.skipCopy[ym],
+    dec:T.m===11&&y===T.y&&!S.years.includes(T.y+1)&&!snoozed(),deg:(Math.min(1,C.p)*360).toFixed(1)};
+}
+function cellHtml(r,d,cls=''){
+  const {y,m}=S,c=r.cells[d-1];
+  if(!c.sc)return `<div class="cell off${cls}" title="${tr('Tidak dijadwalkan')}"><div class="box">–</div></div>`;
+  const st=cellState(`c:${y}-${m}-${r.hb.id}-${d}`);
+  return `<div class="cell${cls}${st?' '+st:''}" data-a="cell" data-id="${r.hb.id}" data-d="${d}"${st==='failed'?` title="${tr('Gagal menyimpan. Ketuk untuk coba lagi.')}"`:''}><div class="box${c.on?' on':''}">${c.on?'✓':''}</div></div>`;
+}
+const moodCell=(x,cls,style='')=>{const {m}=S,st=cellState(`mo:${S.y}-${m}-${x.d}`);
+  const [bg,fg]=x.mood?moodC(x.mood):['var(--bg)','var(--fg)'];
+  return `<div class="${cls}" title="${tr('Pilih mood {d} {m}',{d:x.d,m:MID[m]})}${x.mood&&ML(x.mood)?' · '+esc(ML(x.mood)):''}" style="background:${bg};color:${fg};${st==='saving'?'opacity:.5;':''}${style}">${x.mood||''}<select class="msel" data-c="moodSel" data-d="${x.d}" aria-label="Mood ${x.d} ${MID[m]}">${optsHtml(MOOD_CELL(),x.mood)}</select></div>`;};
+const jIcon=(x,jd)=>x.hasJ?(x.d===jd?envOpen():envClosed()):'';
+const moodLegend=()=>`<span><i style="height:2.5px;width:14px;background:var(--fg)"></i>${tr('skor mood')}</span><span><i style="height:2px;width:14px;background:var(--green)"></i>${tr('% habit harian')}</span><span><b style="background:var(--fg);padding:2px 3px;display:flex">${envClosed(14)}</b>${tr('ada jurnal')}</span><span><b style="background:var(--fg);padding:1px 3px;display:flex">${envOpen(14)}</b>${tr('sedang dibuka')}</span><span>${tr('skor')} ${moodRange().map(v=>{const [bg,fg]=moodC(v);return `<b title="${esc(moodLbl(v))}" style="padding:0 5px;background:${bg};color:${fg};font-weight:400">${v}</b>`;}).join('')}</span><span>${tr('· klik skor = pilih mood')}</span>`;
+
+function journalCard(X,mob){
+  const {y,m}=S,{jd,isCur}=X;
+  if(!jd)return `<div class="center" style="flex:1;gap:10px"><b>${tr('Belum ada jurnal bulan ini')}</b><span class="muted" style="font-size:13px">${tr('Tulis 1–2 kalimat tentang hari ini. Cukup 30 detik.')}</span><button class="btn" data-a="jWrite">${tr(isCur?'Tulis jurnal hari ini':'Tulis jurnal')}</button></div>`;
+  const k=dkey(y,m,jd),s=moodOf(y,m,jd),n=dim(y,m);
+  // Mode "jurnal baru": tanggal jadi pemilih tanggal (terbatas bulan ini) supaya bisa diganti
+  const date=S.jNew===X.ym
+    ?`<input type="date" class="sel" data-c="jNewDate" value="${k}" min="${dkey(y,m,1)}" max="${dkey(y,m,n)}" aria-label="${tr('Tanggal jurnal baru')}" style="flex:1;min-width:0;height:28px;padding:0 4px;font-size:${mob?11:12}px;background:var(--card)">`
+    :`<span style="flex:1;min-width:0;font-weight:700;font-size:${mob?11:13}px;line-height:1.35">${DAYID[new Date(y,m,jd).getDay()]}, ${jd} ${mob?MID[m].slice(0,3):MID[m]} ${y}</span>`;
+  const btn=S.jNew===X.ym?`<button class="jadd" data-a="jNewCancel" title="${tr('Batal')}" aria-label="${tr('Batal tulis jurnal baru')}">×</button>`:`<button class="jadd" data-a="jNewDash" title="${tr('Tulis jurnal baru')}" aria-label="${tr('Tulis jurnal baru')}">+</button>`;
+  return `<div class="row" style="gap:${mob?6:8}px">${date}${btn}</div>
+    <div class="row" style="gap:6px;align-self:flex-start"><select class="mpill" data-c="jMoodSel" data-k="${k}" aria-label="Mood ${jd} ${MID[m]}" style="${mob?'min-height:32px;':''}background:${s?moodC(s)[0]:'var(--line)'};color:${s?moodC(s)[1]:'var(--fg)'}">${optsHtml(MOOD_PILL(),s)}</select>${affBtn(k)}</div>
+    <textarea id="jt-${mob?'m':'dash'}" data-i="journal" data-k="${k}" placeholder="${JPH}" style="flex:1;resize:none;border:1px dashed #999;background:var(--bg);padding:${mob?8:10}px;font-size:${mob?13:14}px;line-height:1.5;min-height:${mob?170:220}px">${esc(jOf(k))}</textarea>
+    <span class="muted" style="font-size:${mob?11:12}px">${tr(cellState('j:'+k)==='saving'?'Menyimpan…':'Tersimpan otomatis')}</span>`;
+}
+// Bulan tanpa habit: pilih salin / mulai kosong (6c/6p), atau sambutan pertama kali (6i/6j)
+function emptyHabits(X,mob){
+  const {y,m}=S,src=X.copySrc;
+  if(X.showCopy)return `<div class="empty-card" style="align-items:stretch;text-align:left;${mob?'border:0;padding:0;margin:0':'max-width:560px;margin:16px auto 0'}">
+      <div><div style="font-weight:800;font-size:${mob?22:20}px;line-height:1.2">${tr('{m} {y} belum punya habit',{m:MID[m],y})}</div><div class="muted" style="font-size:13px;margin-top:4px">${tr('Pilih cara memulai bulan ini.')}</div></div>
+      <button class="opt${S.copyChoice==='copy'?' on':''}" data-a="copyChoice" data-v="copy"><span class="radio"><i></i></span><span><b>${tr('Salin dari {m} {y}',{m:MID[src.m],y:src.y})}</b> <span class="chip" style="background:var(--hover)">${tr('disarankan')}</span><br><span class="muted" style="font-size:12px">${tr('{n} habit beserta urutan, frekuensi, dan goal manual. Centang, mood, dan jurnal tidak ikut disalin.',{n:src.habits.length})}</span></span></button>
+      <button class="opt${S.copyChoice==='blank'?' on':''}" data-a="copyChoice" data-v="blank"><span class="radio"><i></i></span><span><b>${tr('Mulai kosong')}</b><br><span class="muted" style="font-size:12px">${tr('Tambah habit satu per satu.')}</span></span></button>
+      <button class="btn g lg" data-a="copyGo" style="margin-top:${mob?16:0}px">${tr('Lanjutkan')}</button></div>`;
+  return `<div class="empty-card"${mob?' style="border:0;padding:24px 8px;margin:0"':''}><div style="font-weight:800;font-size:20px">${tr('Belum ada habit')}</div><div class="muted" style="font-size:13px;max-width:360px;line-height:1.5">${tr('Mulai dengan 1–3 habit kecil. Kamu bisa menambah, mengubah, atau menghapus kapan saja.')}</div>
+    <div style="display:flex;gap:10px;${mob?'flex-direction:column;align-self:stretch':'flex-wrap:wrap;justify-content:center'}"><button class="btn g lg" data-a="openAdd">${tr('+ Tambah habit pertama')}</button>${src?`<button class="btn lg" data-a="copyNow" style="display:flex;align-items:center;justify-content:center;gap:8px">${SVG(IC.copy,18)}${tr('Salin dari {m} {y}',{m:MID[src.m],y:src.y})}</button>`:''}</div>
+    ${src?`<span class="muted" style="font-size:12px;line-height:1.4">${tr('Salin {n} habit beserta frekuensi &amp; goal. Centang, mood, dan jurnal tidak ikut.',{n:src.habits.length})}</span>`:''}
+    <div class="muted" style="font-size:12px">${tr('atau mulai dari contoh:')}</div><div class="sug">${SUGGEST.slice(0,mob?3:4).map(s=>`<button data-a="openAdd" data-name="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+    ${mob?`<div style="margin-top:12px;width:100%;border-top:1.5px solid var(--fg);padding-top:10px;display:flex;flex-direction:column;gap:4px;text-align:left"><span class="lbl">${tr('MOOD &amp; JURNAL')}</span><span class="muted" style="font-size:12px;line-height:1.45">${tr('Tetap bisa diisi tanpa habit lewat Input cepat.')}</span></div>`:''}</div>`;
+}
+
+function dashDesktop(){
+  const X=dashCtx(),{y,m}=S,{C,T,isCur,ld,jd}=X,{n,rows,days}=C;
+  const sep=i=>i>0&&i%7===0?' sep':'';
+  const weeks=[];for(let w=0;w<Math.ceil(n/7);w++){const c=Math.min(7,n-w*7);weeks.push(`<div style="width:${c*CW}px">${c<3?'W':'WEEK '}${w+1}</div>`);}
+  const wkRow=`<div class="wk">${weeks.join('')}</div>`;
+  const iniRow=`<div class="dr">${days.map((x,i)=>`<div class="${sep(i)}">${INI[new Date(y,m,x.d).getDay()]}</div>`).join('')}</div>`;
+  const numRow=(circle)=>`<div class="dr num" style="border-bottom:1px solid var(--fg)">${days.map((x,i)=>`<div class="${sep(i)}">${circle?`<span class="dnum${isCur&&x.d===T.d?' today':''}">${x.d}</span>`:x.d}</div>`).join('')}</div>`;
+  // Grafik mood & % habit harian
+  const pathFor=(vals,H,min,max)=>smooth(vals.map((v,i)=>v==null?null:[i*CW+CW/2,+(H-12-(v-min)/(max-min)*(H-24)).toFixed(1)]).filter(Boolean));
+  const moodPath=pathFor(days.map(x=>x.mood||null),130,1,Math.max(2,moodN()));
+  const habPath=X.hasHabits?pathFor(days.map(x=>x.d<=ld?x.pct:null),130,0,100):'';
+
+  const gridArea=X.hasHabits
+    ?rows.map(r=>`<div class="grow">${r.cells.map((c,i)=>cellHtml(r,i+1,sep(i))).join('')}</div>`).join('')
+      +`<div class="legend" style="margin-top:10px;font-size:12px"><span><i class="box on" style="width:14px;height:14px;font-size:10px;line-height:11px">✓</i>${tr('selesai')}</span><span><i class="box" style="width:14px;height:14px"></i>${tr('belum')}</span><span><i class="box" style="width:14px;height:14px;border-color:var(--offb);background:var(--off)"></i>${tr('tidak dijadwalkan / belum mulai')}</span><span>${tr('· hover = hijau muda')}</span></div>`
+    :emptyHabits(X,false);
+
+  return `<div class="dash-wrap"><div class="dash">
+  ${X.dec?`<div class="banner"><div><b style="font-size:16px">${tr('{y} tinggal {n} hari',{y:T.y,n:dim(T.y,11)-T.d+1})}</b><div class="muted" style="font-size:13px">${tr('Siapkan lembar {n} sekarang supaya 1 Januari langsung bisa dipakai.',{n:T.y+1})}</div></div><div class="sp"></div><button class="btn g" data-a="createYear" data-y="${T.y+1}">${tr('Tambah lembar {y}',{y:T.y+1})}</button><button class="btn" data-a="snooze">${tr('Nanti')}</button></div>`:''}
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-weight:800;font-size:17px;letter-spacing:.1em">${y}</div>
+    <div style="font-weight:800;font-size:32px;letter-spacing:.1em;line-height:1">${MONTHS[m].toUpperCase()}</div>
+    <div style="margin-top:10px;padding-top:12px;border-top:1px dashed var(--chipb)">${greetHtml([30,22,6])}</div>
+  </div>
+  <div style="display:flex;flex-direction:column">
+    <div style="text-align:center;font-weight:700;font-size:12px;letter-spacing:.3em;padding-bottom:8px;border-bottom:1px solid var(--fg)">DAILY PERCENTAGE PROGRESS</div>
+    <div style="display:flex;align-items:flex-end;height:150px;border-bottom:1.5px solid var(--fg)">${days.map(x=>`<div class="bar" style="height:100%;align-items:flex-end"><div style="width:18px;height:${Math.round(x.pct*1.4)}px;background:var(--fg);transition:height .2s"></div></div>`).join('')}</div>
+    <div style="display:flex;height:22px">${days.map(x=>`<div class="dl" style="font-size:9px;font-weight:600">${x.pct}%</div>`).join('')}</div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--fg);border-bottom:1px solid var(--fg);padding:0 4px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;letter-spacing:.25em">PROGRESS</span><span style="font-weight:800;font-size:30px">${X.hasHabits?comma((C.p*100).toFixed(1))+'%':'–'}</span></div>
+    <div style="width:140px;height:140px;border-radius:50%;background:conic-gradient(var(--fg) 0deg ${X.deg}deg, #DADADA ${X.deg}deg 360deg);display:flex;align-items:center;justify-content:center"><div style="width:110px;height:110px;border-radius:50%;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px"><span style="font-size:10px;letter-spacing:.25em">HABITS</span><span style="font-weight:800;font-size:18px">${C.total} / ${C.goalSum}</span></div></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column">
+    <div class="h-title" style="height:82px;border-bottom:1px solid var(--fg);font-size:26px">My Habits</div>
+    ${rows.map((r,i)=>`<div class="hrow" draggable="true" data-drag="${i}"><span style="width:26px;text-align:center;font-weight:700">${r.i}</span><span class="nm" data-a="openDetail" data-id="${r.hb.id}" title="${esc(freqLabel(r.hb.f))}">${esc(r.hb.name)}</span><span class="grip" title="${tr('Seret untuk mengurutkan')}">⋮⋮</span></div>`).join('')}
+    <button class="addrow" data-a="openAdd">${tr('+ Tambah habit')}</button>
+  </div>
+  <div style="display:flex;flex-direction:column">${wkRow}${iniRow}${numRow(true)}${gridArea}</div>
+  <div style="display:flex;flex-direction:column">
+    <div class="h-title" style="height:52px;font-size:20px">HABITS PROGRESS</div>
+    <div class="pg" style="height:30px;border-bottom:1px solid var(--fg);font-size:11px;font-weight:700"><span style="border:0">GOAL</span><span style="text-align:center">PERCENTAGE</span><span style="text-align:center">COUNT</span></div>
+    ${rows.map(r=>`<div class="pg"><span title="${esc(freqLabel(r.hb.f))}${r.hb.goal?tr(' · goal manual'):''}">${r.goal}</span><div class="row" style="gap:6px;padding-left:6px"><span style="width:36px;font-weight:700;text-align:right">${r.pct}%</span><div style="height:22px;width:${Math.round(r.pct*1.25)}px;background:${r.pct>=100?'var(--green)':'var(--fg)'};transition:width .2s"></div></div><span style="text-align:center">${r.count} / ${r.goal}</span></div>`).join('')}
+  </div>
+
+  <div style="display:flex;flex-direction:column">
+    <div class="h-title" style="height:60px;border-bottom:1px solid var(--fg);font-size:20px">JOURNAL TODAY</div>
+    <div style="flex:1;background:var(--soft);padding:16px;display:flex;flex-direction:column;gap:10px;min-height:300px">${journalCard(X,false)}</div>
+  </div>
+  <div style="display:flex;flex-direction:column">
+    <div class="h-title" style="height:60px;font-size:20px">MOOD TRACKER</div>
+    ${wkRow}${iniRow}${numRow(false)}
+    <div style="background:var(--soft2);height:130px"><svg width="${n*CW}" height="130" viewBox="0 0 ${n*CW} 130" style="display:block"><path d="${habPath}" fill="none" stroke="#5CB85C" stroke-width="2"/><path d="${moodPath}" fill="none" stroke="var(--fg)" stroke-width="2.5"/></svg></div>
+    <div style="display:flex">${days.map(x=>moodCell(x,'ms')).join('')}</div>
+    <div style="display:flex;background:var(--fg)">${days.map(x=>`<div class="ji"${x.hasJ?` data-a="pickJ" data-d="${x.d}" style="cursor:pointer" title="${tr('Jurnal {d} {m}',{d:x.d,m:MID[m]})}"`:''}>${jIcon(x,jd)}</div>`).join('')}</div>
+    <div class="legend" style="margin-top:8px">${moodLegend()}</div>
+  </div>
+  <div style="display:flex;flex-direction:column">
+    <div class="h-title" style="height:60px;font-size:18px;white-space:nowrap">TOP 10 MOST CONSISTENT</div>
+    <div class="top10" style="background:var(--fg);color:var(--bg);height:30px;font-size:11px;font-weight:700;border:0"><span></span><span style="text-align:center">HABIT</span><span style="text-align:center">%</span></div>
+    ${C.top.length?C.top.map((r,i)=>`<div class="top10"><span style="text-align:center;font-weight:700">${i+1}</span><span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.hb.name)}</span><span style="text-align:center;font-weight:700">${r.pct}%</span></div>`).join(''):`<div class="muted" style="font-size:12px;padding:12px 4px">${tr('Muncul setelah ada habit yang dicentang.')}</div>`}
+  </div>
+  </div></div>
+  <div class="fab hide-m">
+    <button class="btn g" data-a="openQI">${tr('+ Input cepat')}</button>
+    <button class="btn" data-a="saveDrive" style="display:flex;align-items:center;gap:6px" title="${tr('Save ke Google Drive')}">${SVG(IC.up,16)}Save</button>
+    <button class="btn" data-a="loadDrive" style="display:flex;align-items:center;gap:6px" title="${tr('Load dari Google Drive')}">${SVG(IC.down,16)}Load</button>
+    <button class="btn" data-a="print">Export PDF</button></div>`;
+}
+function findCopySource(y,m){
+  for(let k=m-1;k>=0;k--){const M=month(y,k);if(M&&M.habits.length)return {y,m:k,habits:M.habits};}
+  const prevY=[...S.years].reverse().find(v=>v<y);
+  if(prevY!=null){if(!S.cache[prevY]){ensureYear(prevY);return null;}for(let k=11;k>=0;k--){const M=month(prevY,k);if(M.habits.length)return {y:prevY,m:k,habits:M.habits};}}
+  return null;
+}
+function snoozed(){try{return Number(localStorage.getItem('hb-dec-snooze'))>Date.now();}catch(e){return false;}}
+
+/* ── Dashboard HP (7a): kolom kiri beku, kanan digeser 1 minggu per slide; slide terakhir = Progress / Habits Progress / Top 10 ── */
+const mFab=()=>{const sv=tr('Save ke Google Drive'),ld=tr('Load dari Google Drive'),qi=tr('Input cepat');return `<div class="mfab"><button data-a="saveDrive" title="${sv}" aria-label="${sv}">${SVG(IC.up)}</button><button data-a="loadDrive" title="${ld}" aria-label="${ld}">${SVG(IC.down)}</button><button class="g" data-a="openQI" title="${qi}" aria-label="${qi}">+</button></div>`;};
+function dashMobile(){
+  const X=dashCtx(),{y,m}=S,{C,T,isCur,ym,ld,jd}=X,{n,rows,days}=C;
+  const dec=X.dec?`<div class="m-sec" style="padding-top:12px"><div class="mdec"><b style="font-size:16px">${tr('{y} tinggal {n} hari',{y:T.y,n:dim(T.y,11)-T.d+1})}</b><span style="font-size:12px;opacity:.85;line-height:1.4">${tr('Siapkan lembar {n} sekarang supaya 1 Januari langsung bisa dipakai.',{n:T.y+1})}</span><div class="row" style="gap:16px;margin-top:6px"><button class="btn g" data-a="createYear" data-y="${T.y+1}">${tr('Tambah lembar {y}',{y:T.y+1})}</button><button class="linkbtn" data-a="snooze">${tr('Nanti')}</button></div></div></div>`:'';
+  if(!X.hasHabits)return `${dec}<div class="m-sec" style="padding-top:18px;padding-bottom:${X.showCopy?24:100}px;${X.showCopy?'':'min-height:calc(100vh - 56px);display:flex;flex-direction:column;justify-content:center'}">${emptyHabits(X,true)}</div>${X.showCopy?'':mFab()}`;
+  const nW=Math.ceil(n/7),NS=nW+1,wk=isCur?Math.floor((T.d-1)/7):0;
+  let cur=S.slide[ym];if(cur==null||cur>=NS)cur=wk;S.slide[ym]=cur;
+  const W=[];for(let w=0;w<nW;w++)W.push(Array.from({length:7},(_,k)=>{const d=w*7+k+1;return d<=n?days[d-1]:null;}));
+  const DC=193/7,pp=(ds,f)=>smooth(ds.map((x,k)=>{if(!x)return null;const v=f(x);return v==null?null:[+(k*DC+DC/2).toFixed(1),+v.toFixed(1)];}).filter(Boolean));
+  const dcs=(ds,f,st='')=>`<div style="display:flex;${st}">${ds.map(x=>x?f(x):`<div class="dc"></div>`).join('')}</div>`;
+  const iniR=(ds,h,fs)=>dcs(ds,x=>`<div class="dc" style="font-size:${fs}px;font-weight:700">${INI[new Date(y,m,x.d).getDay()]}</div>`,`height:${h}px`);
+  const left=(inner,st='')=>`<div class="m7l" style="${st}">${inner}</div>`;
+  const row1=left(`<span style="font-weight:800;font-size:13px;letter-spacing:.1em;margin-top:6px">${y}</span><span style="font-weight:800;font-size:20px;letter-spacing:.05em;line-height:1">${MONTHS[m].toUpperCase()}</span><div style="margin-top:4px;padding-top:8px;border-top:1px dashed var(--chipb)">${greetHtml([20,15,4])}</div>`,'gap:8px')
+    +`<div class="m7r">${W.map(ds=>`<div class="sl" style="border-top:1px solid var(--fg);padding-top:8px">${dcs(ds,x=>`<div class="dc" style="height:100%;align-items:flex-end"><div style="width:16px;height:${Math.round(x.pct*1.2)}px;background:var(--fg);transition:height .2s"></div></div>`,'align-items:flex-end;height:130px;border-bottom:1.5px solid var(--fg)')}${dcs(ds,x=>`<div class="dc" style="font-size:8px;font-weight:600">${x.pct}%</div>`,'height:22px')}</div>`).join('')}
+      <div class="sl" style="height:160px;border-top:1px solid var(--fg);border-bottom:1px solid var(--fg);align-items:center;justify-content:center;gap:6px"><span style="font-size:10px;font-weight:700;letter-spacing:.25em">PROGRESS</span><div style="width:96px;height:96px;border-radius:50%;background:conic-gradient(var(--fg) 0deg ${X.deg}deg, #DADADA ${X.deg}deg 360deg);display:flex;align-items:center;justify-content:center"><div style="width:72px;height:72px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center"><b style="font-size:16px">${comma((C.p*100).toFixed(1))}%</b></div></div><span class="muted" style="font-size:11px">Habits <b style="color:var(--fg)">${C.total} / ${C.goalSum}</b></span></div></div>`;
+  const row2=left(`<div class="m7h" style="height:82px;border-bottom:1px solid var(--fg);font-size:19px">My Habits</div>${rows.map(r=>`<div class="m7row"><span style="width:18px;flex:none;text-align:center;font-weight:700">${r.i}</span><span class="nm" data-a="openDetail" data-id="${r.hb.id}">${esc(r.hb.name)}</span></div>`).join('')}<button class="addrow" data-a="openAdd" style="margin-top:12px;height:40px;font-size:12px">${tr('+ Tambah habit')}</button>`)
+    +`<div class="m7r">${W.map((ds,w)=>`<div class="sl bl"><div class="wk" style="height:30px">WEEK ${w+1}</div>${iniR(ds,26,11)}${dcs(ds,x=>`<div class="dc"><span class="dnum${isCur&&x.d===T.d?' today':''}" style="width:20px;height:20px;font-size:11px">${x.d}</span></div>`,'height:26px;border-bottom:1px solid var(--fg)')}
+        ${rows.map(r=>dcs(ds,x=>cellHtml(r,x.d),'height:40px;border-bottom:1px dashed var(--dash)')).join('')}</div>`).join('')}
+      <div class="sl bl" style="padding:0 8px"><div class="m7h" style="height:52px;font-size:16px">HABITS PROGRESS</div><div style="height:30px;border-bottom:1px solid var(--fg);display:grid;grid-template-columns:30px 1fr 42px;align-items:center;font-size:10px;font-weight:700"><span style="text-align:center">GOAL</span><span style="padding-left:6px">%</span><span style="text-align:center">COUNT</span></div>
+        ${rows.map(r=>`<div style="height:40px;border-bottom:1px dashed var(--dash);display:grid;grid-template-columns:30px 1fr 42px;align-items:center;font-size:11px"><span style="text-align:center;border-right:1px solid var(--fg);height:100%;display:flex;align-items:center;justify-content:center">${r.goal}</span><div style="display:flex;align-items:center;gap:4px;padding-left:4px;min-width:0"><span style="width:30px;flex:none;font-weight:700;text-align:right">${r.pct}%</span><div style="flex:1;height:18px;background:var(--off)"><div style="height:100%;width:${r.pct}%;background:${r.pct>=100?'var(--green)':'var(--fg)'};transition:width .2s"></div></div></div><span style="text-align:center">${r.count}/${r.goal}</span></div>`).join('')}</div></div>`;
+  const row3=left(`<div class="m7h" style="height:60px;border-bottom:1px solid var(--fg);font-size:15px">JOURNAL TODAY</div><div style="background:var(--soft);padding:12px 10px;display:flex;flex-direction:column;gap:8px;min-height:300px">${journalCard(X,true)}</div>`)
+    +`<div class="m7r">${W.map((ds,w)=>`<div class="sl bl"><div class="m7h" style="height:60px;font-size:15px">MOOD TRACKER</div><div class="wk" style="height:30px">WEEK ${w+1}</div>${iniR(ds,24,10)}${dcs(ds,x=>`<div class="dc" style="font-size:11px">${x.d}</div>`,'height:24px;border-bottom:1px solid var(--fg)')}
+        <div style="background:var(--soft2);height:130px"><svg width="100%" height="130" viewBox="0 0 193 130" preserveAspectRatio="none" style="display:block"><path d="${pp(ds,x=>x.d<=ld?10+(1-x.pct/100)*110:null)}" fill="none" stroke="#5CB85C" stroke-width="2" vector-effect="non-scaling-stroke"/><path d="${pp(ds,x=>x.mood?10+(1-(x.mood-1)/Math.max(1,moodN()-1))*110:null)}" fill="none" stroke="var(--fg)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg></div>
+        ${dcs(ds,x=>moodCell(x,'dc ms','height:36px;font-size:12px;font-weight:700'),'height:36px')}
+        ${dcs(ds,x=>`<div class="dc"${x.hasJ?` data-a="pickJ" data-d="${x.d}" style="cursor:pointer" title="${tr('Jurnal {d} {m}',{d:x.d,m:MID[m]})}"`:''}>${jIcon(x,jd)}</div>`,'height:36px;background:var(--fg)')}</div>`).join('')}
+      <div class="sl bl" style="padding:0 8px"><div class="m7h" style="height:60px;font-size:12px;white-space:nowrap">TOP 10 MOST CONSISTENT</div><div style="display:grid;grid-template-columns:26px 1fr 44px;background:var(--fg);color:var(--bg);height:30px;align-items:center;font-size:10px;font-weight:700"><span></span><span>HABIT</span><span style="text-align:center">%</span></div>
+        ${C.top.length?C.top.map((r,i)=>`<div style="display:grid;grid-template-columns:26px 1fr 44px;height:34px;border-bottom:1px dashed var(--dash);align-items:center;font-size:12px"><span style="text-align:center;font-weight:700">${i+1}</span><span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.hb.name)}</span><span style="text-align:center;font-weight:700">${r.pct}%</span></div>`).join(''):`<div class="muted" style="font-size:12px;padding:12px 4px">${tr('Muncul setelah ada habit yang dicentang.')}</div>`}</div></div>`;
+  return `${dec}<div class="m7" data-m7="${cur}" data-ym="${ym}"><div class="m7g">${row1}${row2}${row3}</div></div>
+    <div class="legend" style="padding:4px 14px 110px;gap:8px 14px">${moodLegend()}</div>${mFab()}`;
+}
+
+/* ── Menu (3a/5d) ── */
+const ICONS={dashboard:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',journal:'M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5 M8 7h8 M8 11h6',stats:'M3 21h18 M6 17v-5 M11 17V7 M16 17v-8 M21 17v-3',settings:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M12 2v3 M12 19v3 M4.9 4.9l2.1 2.1 M17 17l2.1 2.1 M2 12h3 M19 12h3 M4.9 19.1L7 17 M17 7l2.1-2.1'};
+function menuHtml(){
+  if(!S.menu)return '';
+  const items=[['dashboard',t('dash')],['journal',t('jour')],['stats',t('stats')],['settings',t('sett')]];
+  const dk=S.settings.theme==='dark';
+  return `<div class="ov" data-a="menuClose"><nav class="drawer" data-a="noop">
+    <div class="row" style="justify-content:space-between;margin-bottom:18px"><span class="row" style="gap:10px"><img src="${LOGO}" alt="" width="32" height="32" style="border-radius:8px;display:block"><b style="letter-spacing:.06em">HABIT BUILDER</b></span><button class="x" data-a="menuClose" aria-label="${tr('Tutup')}">✕</button></div>
+    ${items.map(([k,l])=>`<button class="mi${S.page===k?' on':''}" data-a="go" data-p="${k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONS[k]}"/></svg>${l}</button>`).join('')}
+    <div class="sp"></div>
+    <div class="row" style="gap:8px;padding:0 6px 12px">
+      <button class="mtg" data-a="setLang" data-v="${S.settings.lang==='en'?'id':'en'}" title="${t('lang')}">${SVG(IC.globe,18)}${S.settings.lang==='en'?'EN':'ID'}</button>
+      <button class="mtg" data-a="setTheme" data-v="${dk?'light':'dark'}" title="${t('theme')}">${SVG(dk?IC.moon:IC.sun,18)}${dk?t('dark'):t('light')}</button>
+      <button class="mtg hide-m" data-a="showKeys" title="${tr('Pintasan keyboard')}" aria-label="${tr('Pintasan keyboard')}" style="font-size:16px">⌨</button>
+    </div>
+    <div style="border-top:1px solid var(--line);padding-top:12px;font-size:12px" class="muted">${S.user?`${t('signed')} <b style="color:var(--fg)">${esc(S.user)}</b>`:tr('Akun Google pemilik sheet')}</div>
+  </nav></div>`;
+}
+
+/* ── Jurnal (4a/5e) ── */
+function viewJournal(){
+  const JY=S.jp.year,T=today();
+  const top=count=>topbar(t('jourT'),`${count!=null?`<span class="muted hide-m" style="font-size:13px">${tr('{n} jurnal',{n:count})}</span>`:''}<div class="sp hide-m"></div>${journalYearSel()}`);
+  if(!S.years.includes(JY)){
+    return `${top()}<div class="center" style="padding:80px 24px"><b style="font-size:20px">${tr('Belum ada jurnal di {y}',{y:JY})}</b><span class="muted">${tr('Lembar {y} belum dibuat.',{y:JY})}</span><button class="btn g" data-a="createYear" data-y="${JY}">${tr('Buat lembar {y}',{y:JY})}</button></div>`;
+  }
+  if(!S.cache[JY]){ensureYear(JY);return `${top()}${loadingBlock()}`;}
+  const J=S.cache[JY].journal,AF=S.cache[JY].affirm||{},has=k=>!!(J[k]||AF[k]),lastM=JY===T.y?T.m:(JY<T.y?11:-1),groups=[];let total=0,first=null;
+  for(let m=11;m>=0;m--){
+    const items=[];for(let d=dim(JY,m);d>=1;d--){const k=dkey(JY,m,d);if(has(k)){items.push(d);if(!first)first=k;}}
+    total+=items.length;
+    if(items.length||m<=lastM)groups.push({m,items});
+  }
+  const sel=S.jp.sel||first;
+  const mobile=isMobile();
+  const list=total||groups.length?groups.map(g=>`<div class="jgh"><span>${MID[g.m]} ${JY}</span><span class="muted" style="font-weight:600;font-size:11px">${tr('{n} entri',{n:g.items.length})}</span></div>
+    ${g.items.length?g.items.map(d=>{const k=dkey(JY,g.m,d),s=moodOf(JY,g.m,d);return `<button class="jcard${k===sel&&!mobile?' on':''}" data-a="jPick" data-k="${k}"><span class="d"><b>${d}</b><span>${DAYID[new Date(JY,g.m,d).getDay()]}</span></span><span style="display:flex;flex-direction:column;gap:5px;min-width:0"><span class="row" style="gap:6px">${moodChip(s)}${AF[k]?`<span class="affi" data-a="affOpen" data-k="${k}" role="button" tabindex="0" title="${tr('Lihat afirmasi')}" aria-label="${tr('Lihat afirmasi')}">${affIcon(true,14)}</span>`:''}</span><span class="tx">${esc(J[k]||'')}</span></span></button>`;}).join('')
+      :`<div class="muted" style="font-size:12px;padding:4px 2px 8px">${tr('Belum ada jurnal di bulan ini.')} <a href="#" data-a="jNew" data-m="${g.m}">${tr('+ Tulis')}</a></div>`}`).join('')
+    :`<div class="center" style="padding:60px 10px"><b>${tr('Belum ada jurnal di {y}',{y:JY})}</b><span class="muted" style="font-size:13px">${tr('Jurnal yang ditulis di tahun ini muncul di sini.')}</span></div>`;
+  const editor=sel?journalEditor(sel):`<div class="center muted" style="height:100%">${tr('Pilih jurnal di kiri.')}</div>`;
+  if(mobile&&S.jp.edit&&sel)return `<div class="m-wrap">${editor}</div>`;
+  // Kartu "Hari ini" muncul di atas daftar kalau jurnal hari ini belum ditulis
+  const todayCard=JY===T.y&&!has(dkey(T.y,T.m,T.d))?`<button class="jtoday" data-a="jToday"><span style="display:flex;flex-direction:column;gap:2px"><b style="font-size:13px">${tr('Hari ini')} · ${DAYID[new Date(T.y,T.m,T.d).getDay()]}, ${T.d} ${MID[T.m]}</b><span class="muted" style="font-size:12px">${tr('Belum ada jurnal')}</span></span><span class="btn g" style="height:36px;padding:0 12px;display:flex;align-items:center">${tr('+ Tulis jurnal')}</span></button>`:'';
+  return `${top(total)}
+    <div class="jgrid"><div class="jlist" data-keep="jlist">${todayCard}${list}</div>${mobile?'':`<div class="jedit">${editor}</div>`}</div>`;
+}
+function journalYearSel(){return `<select class="hsel" data-c="jYear" aria-label="${tr('Tahun')}" style="width:${isMobile()?76:110}px">${yearOptions(S.jp.year,false)}</select>`;}
+function journalEditor(k){
+  const y=+k.slice(0,4),m=+k.slice(5,7)-1,d=+k.slice(8,10),s=moodOf(y,m,d),txt=jOf(k),af=aOf(k),mobile=isMobile();
+  return `${mobile?`<div class="m-top"><button class="x" data-a="jBack" aria-label="${tr('Kembali')}">←</button><b style="font-size:15px">${DAYID[new Date(y,m,d).getDay()]}, ${d} ${MID[m]} ${y}</b><div class="sp"></div><span data-ind>${indHtml()}</span></div>`:''}
+  <div class="${mobile?'jedit':''}" style="display:flex;flex-direction:column;gap:14px;flex:1">
+    ${mobile?'':`<div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font-weight:800;font-size:24px">${DAYID[new Date(y,m,d).getDay()]}, ${d} ${MID[m]} ${y}</span><span data-ind>${indHtml()}</span></div>`}
+    ${txt||af?'':`<label class="row muted" style="gap:10px;font-size:12px">${tr('Tanggal')} <input type="date" class="sel" id="je-date" data-c="jDate" value="${k}" min="${y}-01-01" max="${y}-12-31" style="font-weight:400"></label>`}
+    <div class="row" style="gap:12px;flex-wrap:wrap"><span class="lbl">MOOD</span><div class="moods">${moodRange().map(v=>{const [bg,fg]=moodC(v);return `<button data-a="jMood" data-k="${k}" data-v="${v}" style="${s===v?`background:${bg};color:${fg};border:2px solid var(--fg)`:''}"><b>${v}</b> ${esc(ML(v))}</button>`;}).join('')}</div></div>
+    <textarea id="je-text" data-i="journal" data-k="${k}" placeholder="${JPH}">${esc(txt)}</textarea>
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="lbl row" style="gap:6px">${affIcon(true,14)}${tr(isTodayK(k)?'AFIRMASI HARI INI':'AFIRMASI')}</span><textarea id="je-aff" class="affl" rows="3" data-i="affirm" data-k="${k}" placeholder="${APH}">${esc(af)}</textarea></div>
+    ${S.jp.confirm?`<div class="err" style="color:var(--fg)"><b>${tr('Hapus jurnal ini?')}</b> ${tr('Jurnal {d} {m} {y} akan dihapus permanen. Skor mood hari itu tetap tersimpan.',{d,m:MID[m],y})}<div class="row" style="gap:8px;margin-top:10px"><button class="btn" data-a="jDelNo">${tr('Batal')}</button><button class="btn red" data-a="jDelYes" data-k="${k}">${tr('Hapus')}</button></div></div>`
+      :`<div class="row" style="justify-content:space-between"><a href="#" data-a="jToDash" data-k="${k}" style="font-weight:700;font-size:13px">${tr('← Lihat di dashboard')}</a>${txt||af?`<button class="btn red" data-a="jDel">${tr('Hapus jurnal')}</button>`:''}</div>`}
+  </div>`;
+}
+
+/* ── Statistik (3b/5f) ── */
+function yearStats(Y){
+  const per={},order=[],mon=Array.from({length:12},()=>({sel:0,tgt:0}));
+  for(let m=0;m<12;m++){
+    const ld=lastDay(Y,m);if(!ld)continue;const n=dim(Y,m),upto=Math.min(n,ld);
+    month(Y,m).habits.forEach(hb=>{
+      if(!per[hb.id]){per[hb.id]={name:hb.name,f:hb.f,sel:0,tgt:0,months:Array(12).fill(null),active:0};order.push(hb.id);}
+      let g=upto===n?goalRange(hb,Y,m,1,n):(hb.goal?Math.max(1,Math.round(hb.goal*upto/n)):goalRange(hb,Y,m,1,upto));
+      if(!g)return;
+      const c=Math.min(g,countRange(hb,Y,m,1,upto)),P=per[hb.id];
+      P.name=hb.name;P.f=hb.f;P.sel+=c;P.tgt+=g;P.months[m]=c/g;P.active++;mon[m].sel+=c;mon[m].tgt+=g;
+    });
+  }
+  const moodAvg=[];let ms=0,mc=0;
+  for(let m=0;m<12;m++){let s=0,c=0;const M=month(Y,m);for(let d=1;d<=dim(Y,m);d++){const v=moodOf(Y,m,d);if(v){s+=v;c++;}}moodAvg.push(c?s/c:null);ms+=s;mc+=c;}
+  const habits=order.map(id=>({id,...per[id]}));
+  const totSel=habits.reduce((a,h)=>a+h.sel,0),totTgt=habits.reduce((a,h)=>a+h.tgt,0);
+  return {habits,mon,moodAvg,totSel,totTgt,moodYear:mc?ms/mc:null};
+}
+function viewStats(){
+  const Y=S.st.year;
+  const head=topbar(t('statsT'),`<div class="sp hide-m"></div><select class="hsel" data-c="stYear" aria-label="${tr('Tahun')}" style="width:${isMobile()?76:110}px">${yearOptions(Y,false)}</select>`);
+  if(!S.years.includes(Y))return head+statsEmpty(Y,true);
+  if(!S.cache[Y]){ensureYear(Y);return head+loadingBlock();}
+  const R=yearStats(Y),MS=MID.map(x=>x.slice(0,3));
+  if(!R.totTgt&&R.moodYear==null)return head+statsEmpty(Y,false);
+  const W=1216,CWm=W/12,yH=v=>+(20+(1-v)*200).toFixed(1),NM=moodN(),yM=a=>+(20+(1-(a-1)/Math.max(1,NM-1))*200).toFixed(1);
+  const hp=[],mp=[];
+  R.mon.forEach((x,m)=>{const cx=+(m*CWm+CWm/2).toFixed(1);if(x.tgt)hp.push([cx,yH(x.sel/x.tgt),`${MS[m]}: ${Math.round(x.sel/x.tgt*100)}%`]);const a=R.moodAvg[m];if(a!=null)mp.push([cx,yM(a),`${MS[m]}: mood ${comma(a.toFixed(1))}`]);});
+  const shade=v=>v==null?['var(--soft3)','#BBB','']:v>=1?['#5CB85C','#fff','100']:[`oklch(${(0.95-v*0.72).toFixed(3)} 0 0)`,v>.45?'#fff':'#111',String(Math.round(v*100))];
+  const cellTd=v=>{const [bg,fg,tx]=shade(v);return `<td class="c" style="background:${bg};color:${fg}">${tx}</td>`;};
+  const chk=(on,k,l,sw)=>`<label class="row" style="gap:8px;font-size:12px;font-weight:600;cursor:pointer" data-a="stToggle" data-k="${k}"><span class="chk${on?' on':''}">${on?'✓':''}</span><i style="width:16px;height:2.5px;background:${sw};display:block"></i>${l}</label>`;
+  return `${head}<div class="pg-body" style="display:flex;flex-direction:column;gap:22px">
+    <div class="kpi"><div><div class="lbl">${tr('KONSISTENSI HABIT')}</div><div class="v">${R.totTgt?comma((R.totSel/R.totTgt*100).toFixed(1))+'%':'–'}</div></div><div><div class="lbl">${tr('MOOD RATA-RATA')}</div><div class="v">${R.moodYear!=null?comma(R.moodYear.toFixed(1)):'–'} <span class="muted" style="font-size:14px;font-weight:400">/ ${NM}</span></div></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:10px"><span class="lbl">${tr('TREN {y}',{y:Y})}</span><div class="row" style="gap:16px">${chk(S.st.showH,'showH',tr('Habit (konsistensi %)'),'var(--green)')}${chk(S.st.showM,'showM',tr('Mood (skor 1–{n})',{n:NM}),'var(--fg)')}</div></div>
+      <div class="chart"><svg viewBox="-40 0 ${W+80} 250" width="100%" style="display:block;max-height:300px">
+        ${[0,.25,.5,.75,1].map(v=>`<line x1="0" x2="${W}" y1="${yH(v)}" y2="${yH(v)}" stroke="var(--line)" ${v?'stroke-dasharray="3 3"':''}/><text x="-8" y="${yH(v)+4}" font-size="11" text-anchor="end" fill="var(--muted)">${v*100}%</text>`).join('')}
+        ${moodRange().map(a=>`<text x="${W+10}" y="${yM(a)+4}" font-size="11" fill="var(--muted)">${a}</text>`).join('')}
+        ${MS.map((l,m)=>`<text x="${(m*CWm+CWm/2).toFixed(1)}" y="244" font-size="12" text-anchor="middle" fill="var(--fg)">${l}</text>`).join('')}
+        ${S.st.showH?`<path d="${smooth(hp)}" fill="none" stroke="#5CB85C" stroke-width="2.5"/>${hp.map(([x,y,tt])=>`<circle cx="${x}" cy="${y}" r="5" fill="var(--bg)" stroke="#5CB85C" stroke-width="2"><title>${tt}</title></circle>`).join('')}`:''}
+        ${S.st.showM?`<path d="${smooth(mp)}" fill="none" stroke="var(--fg)" stroke-width="2.5"/>${mp.map(([x,y,tt])=>`<circle cx="${x}" cy="${y}" r="5" fill="var(--bg)" stroke="var(--fg)" stroke-width="2"><title>${tt}</title></circle>`).join('')}`:''}
+      </svg></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="lbl">${tr('SCORE PER BULAN · {y}',{y:Y})}<span class="hide-d muted" style="font-weight:600">${tr(' · geser →')}</span></span>
+      <div class="mx"><table>
+        <tr><th></th>${MS.map(l=>`<th>${l}</th>`).join('')}<th style="text-align:right">${tr('TAHUN')}</th></tr>
+        ${R.habits.map(h=>`<tr><td class="n" title="${esc(freqLabel(h.f))} · ${tr('{n} bulan aktif',{n:h.active})} · ${h.sel}/${h.tgt}">${esc(h.name)}</td>${h.months.map(cellTd).join('')}<td class="t">${h.tgt?Math.round(h.sel/h.tgt*100)+'%':'–'}</td></tr>`).join('')}
+        <tr class="tot"><td class="n b">${tr('Konsistensi habit')}</td>${R.mon.map(x=>cellTd(x.tgt?x.sel/x.tgt:null)).join('')}<td class="t">${R.totTgt?comma((R.totSel/R.totTgt*100).toFixed(1))+'%':'–'}</td></tr>
+        <tr><td class="n b">${tr('Mood rata-rata')}</td>${R.moodAvg.map(a=>{if(a==null)return `<td class="c" style="background:var(--soft3)"></td>`;const [bg,fg]=moodC(Math.round(a));return `<td class="c" style="background:${bg};color:${fg}">${comma(a.toFixed(1))}</td>`;}).join('')}<td class="t">${R.moodYear!=null?comma(R.moodYear.toFixed(1)):'–'}</td></tr>
+      </table></div>
+      <div class="legend"><span><i style="background:oklch(0.95 0 0);border:1px solid var(--line)"></i>0%</span><span><i style="background:oklch(0.23 0 0)"></i>99%</span><span><i style="background:#5CB85C"></i>100%</span><span><i style="background:var(--soft3);border:1px solid var(--line)"></i>${tr('tanpa data · mood pakai warna skor 1–{n}',{n:NM})}</span></div>
+      <span class="muted" style="font-size:12px">${tr('Bulan berjalan dihitung sampai hari ini. Bulan tanpa habit tidak dihitung sebagai kegagalan. Arahkan kursor ke nama habit untuk goal, count, dan jumlah bulan aktif.')}</span>
+    </div>
+  </div>`;
+}
+function statsEmpty(Y,missing){
+  return `<div class="pg-body"><div class="kpi" style="margin-bottom:30px"><div><div class="lbl">${tr('KONSISTENSI')}</div><div class="v">–</div></div><div><div class="lbl">${tr('MOOD')}</div><div class="v">–</div></div></div>
+    <div class="center" style="padding:60px 10px"><b style="font-size:18px">${tr('Belum ada data di {y}',{y:Y})}</b><span class="muted" style="font-size:13px">${missing?tr('Lembar {y} belum dibuat.',{y:Y}):tr('Score muncul setelah habit dicentang atau mood diisi di tahun ini.')}</span>${missing?`<button class="btn g" data-a="createYear" data-y="${Y}">${tr('Buat lembar {y}',{y:Y})}</button>`:''}</div></div>`;
+}
+
+/* ── Pengaturan (3d/5g) ── */
+function viewSettings(){
+  const seg=(items,cur,act)=>`<div class="seg">${items.map(([k,l])=>`<button class="${cur===k?'on':''}" data-a="${act}" data-v="${k}">${l}</button>`).join('')}</div>`;
+  const nm=S.settings.name||'',ms=S.settings.msg==null?greetDefault():S.settings.msg,mob=isMobile();
+  const fld=(id,lbl,val,max,act)=>`<label style="display:flex;flex-direction:column;gap:6px;min-width:0"><span class="row" style="justify-content:space-between;font-size:12px;font-weight:700">${lbl}<span class="muted" style="font-weight:400">${val.length}/${max}</span></span><input class="inp" id="${id}" data-i="${act}" value="${esc(val)}" maxlength="${max}" autocomplete="off"></label>`;
+  return topbar(t('sett'),`<div class="sp"></div><span data-ind>${indHtml()}</span>`)+`
+  <div class="pg-body" style="max-width:720px">
+    <div class="srow"><div class="sp"><h3>${t('lang')}</h3><p>${t('langSub')}</p></div>${seg([['id','Indonesia'],['en','English']],S.settings.lang,'setLang')}</div>
+    <div class="srow"><div class="sp"><h3>${t('theme')}</h3><p>${t('themeSub')}</p></div>${seg([['light',t('light')],['dark',t('dark')]],S.settings.theme,'setTheme')}</div>
+    <div class="srow" style="flex-direction:column;align-items:stretch;gap:12px"><div><h3>${t('greet')}</h3><p>${t('greetSub')}</p></div>
+      <div style="display:grid;grid-template-columns:${mob?'1fr':'200px minmax(0,1fr)'};gap:12px">${fld('set-name',t('gName'),nm,16,'setName')}${fld('set-msg',t('gMsg'),ms,40,'setMsg')}</div>
+      <div style="border:1.5px dashed var(--muted);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px"><span class="muted" style="font-size:10px;font-weight:700;letter-spacing:.15em">${t('preview')}</span>${(g=>`<span style="font-weight:800;font-size:24px;line-height:1.15">${esc(g.hi)}</span>${g.msg?`<span style="font-weight:800;font-size:18px;line-height:1.28;margin-top:2px">${esc(g.msg)}</span>`:''}`)(greetParts())}${affOn()?(a=>a?`<span class="muted" style="font-size:11px;margin-top:8px">${tr('lalu afirmasi terbaru ({d} {m}):',{d:+a.k.slice(8,10),m:MID[+a.k.slice(5,7)-1]})}</span>${affSentences(a.t).map(x=>`<span style="font-weight:800;font-size:18px;line-height:1.28;font-style:italic">${esc(x)}</span>`).join('')}`:`<span class="muted" style="font-size:12px;margin-top:8px">${tr('Belum ada afirmasi. Tulis di Jurnal atau Input cepat.')}</span>`)(affLatest()):''}</div>
+      <div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><b style="font-size:14px">${tr('Tampilkan afirmasi')}</b><span class="muted" style="font-size:12px">${tr('Kalimat afirmasi terbaru diketik bergantian setelah sapaan.')}</span></div>${seg([['on',tr('Tampil')],['off',tr('Sembunyi')]],affOn()?'on':'off','setAffOn')}</div></div>
+    ${moodEditor()}
+    <div class="srow" style="align-items:flex-start"><div class="sp" style="min-width:240px"><h3>${t('acct')}</h3><p>${t('acctSub')}</p>
+      ${S.user?`<p style="margin-top:10px">${t('signed')}</p><p style="color:var(--fg);font-weight:700;font-size:14px">${esc(S.user)}</p>`:''}
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13px;border-top:1px dashed var(--line);padding-top:12px;margin-top:12px"><span class="muted">${t('folder')}</span><b style="font-weight:600">My Drive / Habit Builder</b><span class="muted">${t('saved')}</span><b style="font-weight:600">${S.backupAt?fmtStamp(S.backupAt):'–'}</b></div></div>
+      <div class="row" style="gap:8px"><button class="btn" data-a="saveDrive">${t('saveNow')}</button><button class="btn" data-a="loadDrive">${t('load')}</button></div></div>
+    <div class="srow"><div class="sp"><h3>${t('years')}</h3><p>${t('yearsSub')}</p><div class="row" style="gap:6px;margin-top:10px;flex-wrap:wrap">${S.years.length?S.years.map(v=>`<button class="btn" style="height:32px" data-a="goYear" data-y="${v}">${v}</button>`).join(''):`<span class="muted" style="font-size:12px">${tr('Belum ada')}</span>`}</div></div><button class="btn" data-a="openAddYear">${t('addYear')}</button></div>
+    <div class="srow" style="align-items:flex-start"><div class="sp" style="min-width:240px"><h3>${t('repair')}</h3><p>${t('repairSub')}</p>
+      ${S.repair?`<div style="margin-top:10px;font-size:12px;line-height:1.6">${S.repair.length?S.repair.map(x=>`<div>• ${esc(x)}</div>`).join(''):`<div style="color:var(--green);font-weight:700">${tr('Struktur Sheet sehat. Tidak ada yang perlu diperbaiki.')}</div>`}</div>`:''}</div>
+      <button class="btn" data-a="repair" ${S.repairBusy?'disabled':''}>${S.repairBusy?tr('Memeriksa…'):t('repairBtn')}</button></div>
+  </div>`;
+}
+
+// Skala mood: ubah nama skor, tambah skor baru (maks. 10), hapus skor terakhir (min. 2)
+function moodEditor(){
+  const labels=moodLabels(),N=labels.length,custom=Array.isArray(S.settings.moods),ask=S.moodAsk;
+  const rows=labels.map((l,i)=>{const v=i+1,[bg,fg]=moodC(v);
+    return `<div class="mrow"><span class="mnum" style="background:${bg};color:${fg}">${v}</span><input class="inp" id="ml-${i}" data-i="moodLbl" data-n="${i}" value="${esc(l)}" maxlength="16" placeholder="${tr('skor {n}',{n:v})}" aria-label="${tr('Nama skor {n}',{n:v})}" autocomplete="off">${v===N&&N>2?`<button class="x" data-a="moodDel" title="${tr('Hapus skor {n}',{n:v})}" aria-label="${tr('Hapus skor {n}',{n:v})}">✕</button>`:'<span style="width:32px;flex:none"></span>'}</div>`;}).join('');
+  return `<div class="srow" style="flex-direction:column;align-items:stretch;gap:12px"><div><h3>${tr('Skala mood')}</h3><p>${tr('Ubah nama tiap skor atau tambah skor baru. Berlaku di seluruh halaman: dashboard, Input cepat, Jurnal, dan Statistik.')}</p></div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-width:440px">${rows}</div>
+    ${ask?`<div class="delband" style="border-radius:8px;border:1.5px solid var(--red);max-width:440px"><span>${tr('Skor {n} dipakai di {c} hari pada data yang terbuka. Hari itu akan tampil sebagai skor {p} sampai skor {n} ditambahkan lagi; data di Sheet tidak berubah.',{n:ask.n,c:ask.c,p:ask.n-1})}</span><div class="row" style="gap:8px"><button class="btn" data-a="moodDelNo">${tr('Batal')}</button><button class="btn redfill" data-a="moodDelYes">${tr('Ya, hapus skor {n}',{n:ask.n})}</button></div></div>`:''}
+    <div class="row" style="gap:14px;flex-wrap:wrap">${N<MAX_MOOD?`<button class="btn" data-a="moodAdd">${tr('+ Tambah skor {n}',{n:N+1})}</button>`:`<span class="muted" style="font-size:12px">${tr('Maksimal {n} skor',{n:MAX_MOOD})}</span>`}${custom?`<button class="linkbtn" data-a="moodReset">${tr('Kembalikan ke default')}</button>`:''}</div></div>`;
+}
+function setMoods(arr,delay=300){if(arr)S.settings.moods=arr;else delete S.settings.moods;enqueue('set',{t:'settings',settings:{...S.settings}},delay);render();}
+
+/* ═════════════ Modal ═════════════ */
+function modalHtml(){
+  const M=S.modal;if(!M)return '';
+  switch(M.type){
+    case 'qi':return qiHtml(M);
+    case 'add':return addHtml(M);
+    case 'detail':return detailHtml(M);
+    case 'addYear':return addYearHtml(M);
+    case 'load':return loadHtml(M);
+    case 'keys':return keysHtml();
+    case 'aff':return affHtml(M);
+  }
+  return '';
+}
+// Laptop: modal di tengah. HP: bottom sheet dengan pegangan di atas.
+const wrapModal=(inner,w,cls='')=>`<div class="modal ${cls}" data-a="close"><div class="panel" data-a="noop" style="max-width:${w}px"><div class="handle hide-d"><i></i></div>${inner}</div></div>`;
+// Ikon afirmasi (bintang kilau): terisi kalau tanggal itu punya afirmasi, garis pudar kalau belum
+const affIcon=(on,w=18)=>`<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="${on?'currentColor':'none'}" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M11 3l1.9 5.6 5.6 1.9-5.6 1.9L11 18l-1.9-5.6L3.5 10.5l5.6-1.9z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg>`;
+const isTodayK=k=>{const T=today();return k===dkey(T.y,T.m,T.d);};
+const affBtn=k=>{const a=!!aOf(k);return `<button class="affb${a?' on':''}" data-a="affOpen" data-k="${k}" title="${tr(a?'Lihat afirmasi':'Tulis afirmasi')}" aria-label="${tr(a?'Lihat afirmasi':'Tulis afirmasi')}">${affIcon(a,16)}</button>`;};
+function affHtml(M){
+  const k=M.k,y=+k.slice(0,4),m=+k.slice(5,7)-1,d=+k.slice(8,10);
+  return wrapModal(`<div class="phead"><div style="display:flex;flex-direction:column;gap:3px;min-width:0"><h2 class="row" style="gap:8px">${affIcon(true,20)}${tr(isTodayK(k)?'Afirmasi hari ini':'Afirmasi')}</h2><span class="muted" style="font-size:12px">${DAYID[new Date(y,m,d).getDay()]}, ${d} ${MID[m]} ${y}</span></div>${xBtn()}</div>
+    <div style="padding:16px 20px 22px"><textarea id="af-text" class="aft" data-i="affirm" data-k="${k}" placeholder="${APH}" aria-label="${tr('Afirmasi')}">${esc(aOf(k))}</textarea></div>`,480);
+}
+const xBtn=()=>`<button class="x" data-a="close" aria-label="${tr('Tutup')}">✕</button>`;
+
+/* Input cepat (2a, 6f) */
+function openQI(y,m,d){
+  let draft=null;try{draft=JSON.parse(localStorage.getItem('hb-qi-draft'));}catch(e){}
+  S.modal={type:'qi',y,m,d,checks:{},mood:0,journal:'',aff:'',err:'',busy:false,draft,loaded:false};
+  loadQI();
+}
+function fillQI(q){
+  if(!S.years.includes(q.y)||!S.cache[q.y]){q.loaded=false;ensureYear(q.y);return;}
+  q.checks={};month(q.y,q.m).habits.forEach(hb=>{if(sched(hb,q.y,q.m,q.d))q.checks[hb.id]=isOn(q.y,q.m,hb.id,q.d);});
+  q.mood=moodOf(q.y,q.m,q.d);q.journal=jOf(dkey(q.y,q.m,q.d));q.aff=aOf(dkey(q.y,q.m,q.d));q.loaded=true;q.err='';
+}
+function loadQI(){const q=S.modal;if(q&&q.type==='qi'){fillQI(q);render();}}
+function qiHtml(q){
+  if(!q.loaded&&S.cache[q.y]&&S.years.includes(q.y))fillQI(q);
+  const T=today(),isT=q.y===T.y&&q.m===T.m&&q.d===T.d,lock=q.err||q.busy?' style="opacity:.55;pointer-events:none"':'';
+  let body;
+  if(!S.years.includes(q.y))body=`<div class="center" style="padding:30px 20px"><b>${tr('Lembar {y} belum ada',{y:q.y})}</b><button class="btn g" data-a="createYear" data-y="${q.y}">${tr('Buat lembar {y}',{y:q.y})}</button></div>`;
+  else if(!q.loaded)body=loadingBlock();
+  else{
+    const H=month(q.y,q.m).habits,sh=H.filter(hb=>hb.id in q.checks),done=sh.filter(hb=>q.checks[hb.id]).length;
+    body=`<div${lock}>
+      ${q.draft&&!q.err?`<div class="row" style="gap:10px;margin:12px 16px 0;padding:10px 12px;border:1.5px dashed var(--fg);border-radius:8px;font-size:13px"><span class="sp">${tr('Ada draft {d} {m} yang belum tersimpan.',{d:q.draft.d,m:MID[q.draft.m].slice(0,3)})}</span><button class="linkbtn" data-a="qiDraft">${tr('Lanjutkan draft')}</button><button class="linkbtn muted" data-a="qiDraftDrop">${tr('Buang')}</button></div>`:''}
+      <div style="padding:16px 16px 0;display:flex;flex-direction:column;gap:8px">
+      ${sh.length?`<div class="prog"><div><div style="width:${Math.round(done/sh.length*100)}%"></div></div><b style="font-size:14px">${done}/${sh.length}</b></div>`:''}
+      <div>${sh.length?sh.map(hb=>`<button class="qrow" data-a="qiCheck" data-id="${hb.id}"><span class="sp" style="font-size:15px">${esc(hb.name)}</span><span class="muted" style="font-size:11px;white-space:nowrap">${esc(freqLabel(hb.f).split(' · ')[0])}</span><span class="qbox${q.checks[hb.id]?' on':''}">${q.checks[hb.id]?'✓':''}</span></button>`).join(''):`<div class="muted" style="font-size:13px;padding:8px 4px">${tr(H.length?'Tidak ada habit yang dijadwalkan di tanggal ini.':'Belum ada habit. Mood & jurnal tetap bisa diisi.')}</div>`}</div>
+      ${H.length>sh.length&&sh.length?`<div class="muted" style="font-size:12px">${tr('{n} habit tidak dijadwalkan di tanggal ini',{n:H.length-sh.length})}</div>`:''}
+      <div class="lbl" style="margin-top:14px">${tr(isT?'MOOD HARI INI':'MOOD')}</div>
+      ${moodGrid(q.mood,'qiMood')}
+      <div class="lbl" style="margin-top:14px">${tr(isT?'JURNAL HARI INI':'JURNAL')}</div>
+      <textarea id="qi-j" data-i="qiJ" placeholder="${JPH}" style="width:100%;height:96px;resize:none;border:1.5px solid var(--fg);border-radius:8px;background:var(--card);padding:10px;font-size:14px;line-height:1.5">${esc(q.journal)}</textarea>
+      <div class="lbl row" style="margin-top:14px;gap:6px">${affIcon(true,14)}${tr(isT?'AFIRMASI HARI INI':'AFIRMASI')}</div>
+      <textarea id="qi-a" data-i="qiA" placeholder="${APH}" style="width:100%;height:64px;resize:none;border:1.5px solid var(--fg);border-radius:8px;background:var(--card);padding:10px;font-size:14px;line-height:1.5">${esc(q.aff||'')}</textarea>
+    </div></div>
+    ${q.err?`<div class="err" style="margin:12px 16px 0;background:var(--redbg);border-color:var(--red);color:var(--redfg)"><b>${tr('Gagal menyimpan. Coba lagi.')}</b><br>${tr('Isian kamu tidak hilang. Periksa koneksi internet.')}</div>`:''}
+    <div class="row" style="gap:10px;padding:14px 16px 20px">${q.err?`<button class="btn lg" data-a="qiCloseDraft">${tr('Tutup')}</button><button class="btn g lg sp" data-a="qiSave">${tr('Coba lagi')}</button>`
+      :`<button class="btn g lg sp" data-a="qiSave" ${q.busy?'disabled':''}>${tr(q.busy?'Menyimpan…':'Simpan')}</button>`}</div>`;
+  }
+  return wrapModal(`<div class="phead" style="padding:6px 8px 6px 20px"><h2>${tr('Input cepat')}</h2>${xBtn()}</div>
+    <div class="row" style="justify-content:space-between;padding:2px 8px;border-bottom:1px solid var(--line)"><button class="x" style="width:44px;height:44px;font-size:20px;font-weight:700" data-a="qiShift" data-v="-1" aria-label="${tr('Hari sebelumnya')}">‹</button><b style="font-size:15px;text-align:center">${isT?tr('Hari ini · '):''}${DAYID[new Date(q.y,q.m,q.d).getDay()]}, ${q.d} ${MID[q.m]} ${q.y}</b><button class="x" style="width:44px;height:44px;font-size:20px;font-weight:700" data-a="qiShift" data-v="1" aria-label="${tr('Hari berikutnya')}">›</button></div>
+    ${body}`,440);
+}
+async function qiSave(){
+  const q=S.modal;if(!q||q.busy)return;
+  const {y,m,d}=q,k=dkey(y,m,d),ops=[];
+  Object.keys(q.checks).forEach(id=>ops.push({t:'check',y,m,id,d,v:!!q.checks[id]}));
+  ops.push({t:'mood',y,m,d,v:q.mood||0});
+  if(q.journal!==jOf(k))ops.push({t:'journal',date:k,text:q.journal.trim()?q.journal:''});
+  const qa=(q.aff||'').trim()?q.aff:'';if(qa!==aOf(k))ops.push({t:'affirm',date:k,text:qa});
+  // Perubahan yang masih antre ikut dikirim lebih dulu dalam panggilan yang sama.
+  const pending=[...Q.ops.entries()];Q.ops.clear();clearTimeout(Q.timer);
+  q.busy=true;q.err='';render();
+  try{
+    await call('applyOps',[...pending.map(p=>p[1]),...ops]);
+    const M=month(y,m);
+    record(tr('Input cepat {d} {m}',{d,m:MID[m]}),[[y,m]],()=>{
+      Object.keys(q.checks).forEach(id=>{(M.checks[id]=M.checks[id]||Array(31).fill(false))[d-1]=!!q.checks[id];});
+      M.mood[d-1]=q.mood||0;if(q.journal.trim())S.cache[y].journal[k]=q.journal;else delete S.cache[y].journal[k];
+      const A=S.cache[y].affirm||(S.cache[y].affirm={});if(qa)A[k]=qa;else delete A[k];},[k]);
+    tySync();
+    try{localStorage.removeItem('hb-qi-draft');}catch(e){}
+    S.modal=null;S.y=y;S.m=m;if(q.journal.trim()||qa)S.jSel[`${y}-${m}`]=d;S.lastModified=Date.now();
+    toast(tr('Tersimpan · dashboard diperbarui'));
+  }catch(e){
+    const merged=new Map(pending);Q.ops.forEach((op,key)=>merged.set(key,op));Q.ops=merged;if(Q.ops.size)schedule(4000);
+    q.busy=false;q.err=msg(e);render();
+  }
+}
+
+/* Form habit: Tambah (2d/5i) & Detail (4b/5h) */
+function newDraft(name){const T=today();return {name:name||'',type:'daily',nE:2,nW:3,nM:12,days:[],weeks:[],start:S.y===T.y&&S.m===T.m?dkey(T.y,T.m,T.d):'',goalManual:false,goalVal:0};}
+function habitToDraft(h){const f=h.f;return {name:h.name,type:f.type,nE:f.type==='everyN'?f.n:2,nW:f.type==='perWeek'?f.n:3,nM:f.type==='perMonth'?f.n:12,days:[...(f.days||[])],weeks:[...(f.weeks||[])],start:h.start||'',goalManual:!!h.goal,goalVal:h.goal||0};}
+function draftToHabit(dr,base){
+  const n=dr.type==='everyN'?dr.nE:dr.type==='perWeek'?dr.nW:dr.type==='perMonth'?dr.nM:null;
+  const f={type:dr.type,days:[...dr.days],weeks:[...dr.weeks]};if(n!=null)f.n=Math.max(1,+n||1);
+  return {...base,name:dr.name.trim(),f,start:dr.start||'',goal:null};
+}
+function freqForm(dr,mobile){
+  const fr=[['daily',null,tr('Setiap hari')],['everyN','nE',tr('hari sekali')],['perWeek','nW',tr('kali seminggu')],['perMonth','nM',tr('kali sebulan')]];
+  const tg=(arr,act,items)=>`<div class="tg">${items.map(([v,l])=>`<button class="${arr.includes(v)?'on':''}" data-a="${act}" data-v="${v}">${l}</button>`).join('')}</div>`;
+  // Satu kolom (Detail habit & HP) memakai label ringkas seperti 4b/5i
+  const lb=mobile?'lbl2':'lbl',sub=x=>`<span class="muted" style="font-size:${mobile?10:11}px">${tr('kosong = semua '+x)}</span>`;
+  return `<div style="display:flex;flex-direction:column;gap:6px"><span class="${lb}">${tr('FREKUENSI')}</span>
+    <div style="display:grid;grid-template-columns:${mobile?'1fr':'1fr 1fr'};gap:6px" class="two">${fr.map(([k,nk,post])=>`<div class="fr${dr.type===k?' on':''}" data-a="dType" data-v="${k}"><span class="radio${dr.type===k?' on':''}"><i></i></span>${nk?`<input type="number" min="1" id="dn-${k}" data-i="dN" data-k="${nk}" data-t="${k}" value="${dr[nk]}">`:''}<span>${post}</span></div>`).join('')}</div></div>
+  <div style="display:flex;flex-direction:column;gap:6px"><div class="row" style="justify-content:space-between;align-items:baseline"><span class="${lb}">${tr(mobile?'HARI':'HARI APA SAJA?')}</span>${sub('hari')}</div>${tg(dr.days,'dDay',[1,2,3,4,5,6,0].map(x=>[x,DS[x]]))}</div>
+  <div style="display:flex;flex-direction:column;gap:6px"><div class="row" style="justify-content:space-between;align-items:baseline"><span class="${lb}">${tr(mobile?'MINGGU KE':'MINGGU KE BERAPA?')}</span>${sub('minggu')}</div>${tg(dr.weeks,'dWeek',[1,2,3,4,5].map(x=>[x,'W'+x]))}</div>
+  <div class="row" style="justify-content:space-between;gap:12px"><span class="${lb}">${tr('MULAI TANGGAL')}</span><input type="date" class="sel" id="d-start" data-c="dStart" value="${dr.start}" style="font-weight:400;background:var(--card)"></div>`;
+}
+function calHtml(hb,y,m,opts){
+  const n=dim(y,m),lead=(new Date(y,m,1).getDay()+6)%7,T=today(),flex=(hb.f.type==='perWeek'||hb.f.type==='perMonth')&&!hb.f.days.length;
+  let cells='';for(let i=0;i<lead;i++)cells+='<div></div>';
+  for(let d=1;d<=n;d++){
+    const s=sched(hb,y,m,d),isT=y===T.y&&m===T.m&&d===T.d;
+    if(opts.preview){
+      if(y===T.y&&m===T.m&&d<T.d)cells+=`<div class="past">${d}</div>`;
+      else cells+=s?`<div class="k${flex?' flex':''}${isT?' today':''}">${d}</div>`:`<div class="off">${d}</div>`;
+    }else{
+      const c=s&&isOn(y,m,hb.id,d);
+      cells+=s?`<div class="${c?'done':'k'} click" data-a="calCheck" data-d="${d}">${d}</div>`:`<div class="off">${d}</div>`;
+    }
+  }
+  return `<div class="cal hd">${[1,2,3,4,5,6,0].map(x=>`<div>${DS[x]}</div>`).join('')}</div><div class="cal">${cells}</div>`;
+}
+function addHtml(M){
+  const {y,m}=S,dr=M.draft,hb=draftToHabit(dr,{id:'_'}),g=goalRange(hb,y,m,1,dim(y,m)),ok=dr.name.trim()!=='',mobile=isMobile();
+  const form=`<div style="display:flex;flex-direction:column;gap:6px"><span class="${mobile?'lbl2':'lbl'}">${tr('NAMA HABIT')}</span><input class="inp" id="add-name" data-i="dName" value="${esc(dr.name)}" placeholder="${tr('mis. Baca buku 10 halaman')}" autocomplete="off"></div>${freqForm(dr,mobile)}`;
+  if(mobile)return wrapModal(`<div class="phead" style="padding:6px 8px 6px 20px"><h2>${tr('Tambah habit')}</h2>${xBtn()}</div><div style="display:flex;flex-direction:column;gap:16px;padding:18px 16px 16px">${form}</div>
+    <div class="pfoot"><span class="lbl" style="font-size:10px">${tr('GOAL BULAN INI')}</span><b style="font-size:20px">${g}×</b><div class="sp"></div><button class="btn g lg${ok?'':' dis'}" data-a="addSave">${tr('Simpan habit')}</button></div>`,560);
+  return wrapModal(`<div class="phead"><h2>${tr('Tambah habit')}</h2>${xBtn()}</div>
+    <div class="mgrid" style="display:grid;grid-template-columns:1fr 300px">
+      <div style="display:flex;flex-direction:column;gap:16px;padding:18px 20px;border-right:1.5px solid var(--fg)">${form}</div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:18px 16px"><span class="lbl">${tr('PRATINJAU · {m} {y}',{m:MID[m],y})}</span>${calHtml(hb,y,m,{preview:true})}
+        <div class="legend" style="flex-direction:column;gap:4px"><span><i style="border:1.5px dashed var(--fg)"></i>${tr('dijadwalkan (garis putus = fleksibel, pilih sendiri)')}</span><span><i style="background:var(--off)"></i>${tr('tidak dijadwalkan')}</span><span><i style="background:var(--soft3);border:1px solid var(--line)"></i>${tr('sudah lewat / sebelum tanggal mulai')}</span></div>
+        <div class="sp"></div><div class="row" style="border-top:2px solid var(--fg);padding-top:10px;gap:8px"><div class="sp"><div class="lbl" style="font-size:10px">${tr('GOAL BULAN INI')}</div><div class="muted" style="font-size:11px">${esc(freqLabel(hb.f))}</div></div><b style="font-size:28px">${g}×</b></div></div>
+    </div>
+    <div class="pfoot" style="justify-content:flex-end"><button class="btn lg" data-a="close">${tr('Batal')}</button><button class="btn g lg${ok?'':' dis'}" data-a="addSave">${tr('Simpan habit')}</button></div>`,820);
+}
+function detailHtml(M){
+  const {y,m}=S,mh=month(y,m),hb0=mh&&mh.habits.find(h=>h.id===M.id);
+  if(!hb0){S.modal=null;return '';}
+  const dr=M.draft||habitToDraft(hb0),n=dim(y,m),T=today(),ld=lastDay(y,m),mobile=isMobile();
+  const tmp=draftToHabit(dr,{id:hb0.id}),auto=goalRange(tmp,y,m,1,n),goal=dr.goalManual?Math.max(1,+dr.goalVal||auto):auto;
+  if(dr.goalManual)tmp.goal=goal;
+  const cnt=countRange(tmp,y,m,1,n),pc=goal?Math.min(100,cnt/goal*100):0;
+  const dirty=!!M.draft,ok=dirty&&dr.name.trim()!=='';
+  const settings=`<div style="display:flex;flex-direction:column;gap:16px">${freqForm(dr,true)}
+    <div style="background:var(--soft);border-radius:${mobile?12:10}px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+      <div class="row" style="justify-content:space-between"><span class="lbl" style="font-size:11px">GOAL</span><div class="seg" style="background:var(--bg)"><button class="${dr.goalManual?'':'on'}" data-a="dGoalMode" data-v="auto">${tr('Otomatis')}</button><button class="${dr.goalManual?'on':''}" data-a="dGoalMode" data-v="manual">${tr('Manual')}</button></div></div>
+      <div class="row" style="justify-content:space-between;gap:10px">${dr.goalManual?`<span class="row" style="gap:8px"><input type="number" min="1" class="sel" id="dt-goal" data-i="dGoal" value="${goal}" style="width:76px;height:${mobile?44:38}px;font-size:18px;font-weight:800;text-align:center"><b>×</b></span>`:`<b style="font-size:26px">${auto}×</b>`}<span class="muted" style="font-size:11px">${dr.goalManual?tr('otomatis: {n}× · hanya bulan ini',{n:auto}):tr('dihitung dari frekuensi')}</span></div>
+    </div></div>`;
+  // Kalender pakai jadwal draft (pratinjau); klik tanggal terjadwal = centang/batal seperti di grid
+  const lead=(new Date(y,m,1).getDay()+6)%7;let cal='';for(let i=0;i<lead;i++)cal+='<div></div>';
+  for(let d=1;d<=n;d++){const s=sched(tmp,y,m,d),c=s&&isOn(y,m,hb0.id,d);
+    cal+=s?`<div class="click" data-a="calCheck" data-d="${d}"><span>${d}</span><i class="box${c?' on':''}">${c?'✓':''}</i></div>`:`<div class="off" title="${tr('Tidak dijadwalkan')}"><span>${d}</span><i class="box">–</i></div>`;}
+  const perf=`<div style="display:flex;flex-direction:column;gap:${mobile?18:20}px">
+    <div style="display:flex;flex-direction:column;gap:8px"><span class="lbl" style="font-size:${mobile?11:12}px">PROGRESS</span><div class="prog"><div><div style="width:${pc.toFixed(0)}%"></div></div><span style="font-size:13px;white-space:nowrap"><b style="font-size:15px">${pc.toFixed(0)}%</b> <span class="muted">· ${cnt} / ${goal}</span></span></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><span class="lbl" style="font-size:11px">${tr('KALENDER')}</span>
+      <div class="cal2 hd">${[1,2,3,4,5,6,0].map(x=>`<span>${DS[x]}</span>`).join('')}</div><div class="cal2">${cal}</div>
+      <div class="legend"><span><i class="box on" style="width:14px;height:14px;font-size:10px;line-height:11px">✓</i>${tr('selesai')}</span><span><i class="box" style="width:14px;height:14px"></i>${tr('belum')}</span><span><i class="box" style="width:14px;height:14px;border-color:var(--offb);background:var(--off);color:var(--offf);font-size:10px;line-height:11px">–</i>${tr('tidak dijadwalkan')}</span></div></div>
+  </div>`;
+  const delText=tr('Hapus "{name}"? {n} centang di {m} {y} ikut hilang. Bulan lain tidak berubah.',{name:esc(hb0.name),n:countRange(hb0,y,m,1,n),m:MID[m],y});
+  const band=M.confirm?`<div class="delband"><span>${delText}</span><div class="row" style="gap:8px;${mobile?'width:100%':''}"><button class="btn" data-a="dDelNo">${tr('Batal')}</button><button class="btn redfill" data-a="dDelYes">${tr('Ya, hapus')}</button></div></div>`:'';
+  const nameInp=(fs,h)=>`<input id="dt-title" class="tinp" data-i="dName" value="${esc(dr.name)}" aria-label="${tr('Nama habit')}" style="flex:1;min-width:0;height:44px;border:1.5px dashed transparent;border-radius:8px;background:transparent;padding:0 ${h}px;font-weight:800;font-size:${fs}px;outline:none">`;
+  if(mobile)return wrapModal(`<div class="phead" style="height:56px;padding:0 8px 0 14px;gap:8px;flex:none">${nameInp(20,6)}<span class="muted b" style="font-size:13px;white-space:nowrap">${MID[m].slice(0,3)} ${y}</span>${xBtn()}</div>
+    <div class="pbody" style="padding:18px 16px 24px;display:flex;flex-direction:column;gap:18px">${perf}<div style="border-top:1.5px solid var(--fg);margin-top:4px"></div>${settings}${M.confirm?'':`<button class="linkbtn" style="align-self:center;color:var(--red);font-size:14px;padding:8px" data-a="dDel">${tr('Hapus habit')}</button>`}</div>
+    ${band}<div style="flex:none;padding:10px 16px 28px;border-top:1px solid var(--line)">${M.saved&&!dirty?`<div style="text-align:center;color:var(--green);font-weight:700;font-size:12px;margin-bottom:6px">${tr('Tersimpan')}</div>`:''}<button class="btn g lg${ok?'':' dis'}" style="width:100%;height:52px;border-radius:12px" data-a="dSave">${tr('Simpan perubahan')}</button></div>`,560,'tall');
+  return wrapModal(`<div class="phead" style="padding:14px 20px;gap:14px">${nameInp(24,8)}<span class="b" style="font-size:13px;color:var(--muted);white-space:nowrap">${MID[m]} ${y}</span>${xBtn()}</div>
+    <div class="mgrid" style="display:grid;grid-template-columns:400px 1fr"><div style="padding:18px 20px;border-right:1px dashed var(--chipb)">${settings}</div><div style="padding:18px 20px">${perf}</div></div>
+    ${band}<div class="pfoot" style="padding:14px 20px">${M.confirm?'':`<button class="linkbtn" style="color:var(--red)" data-a="dDel">${tr('Hapus habit')}</button>`}<div class="sp"></div>${M.saved&&!dirty?`<span style="color:var(--green);font-weight:700;font-size:12px">${tr('Tersimpan')}</span>`:''}<button class="btn lg" data-a="close">${tr('Batal')}</button><button class="btn g lg${ok?'':' dis'}" data-a="dSave">${tr('Simpan perubahan')}</button></div>`,1000);
+}
+
+/* Tambah tahun (6b) */
+function addYearHtml(M){
+  const exists=S.years.includes(M.year);
+  if(M.busy)return wrapModal(`<div class="phead"><h2>${tr('Membuat lembar {y}…',{y:M.year})}</h2></div><div style="padding:20px;display:flex;flex-direction:column;gap:10px"><div style="height:8px;background:var(--line);border-radius:4px;overflow:hidden"><div style="height:100%;width:40%;background:var(--fg);animation:pl 1s infinite"></div></div><span class="muted" style="font-size:12px">${tr('12 bulan sedang dibuat di Google Sheet. Jangan tutup halaman ini.')}</span></div>`,420);
+  const prev=[...S.years].reverse().find(v=>v<M.year);
+  let src='';if(prev!=null&&S.cache[prev]){for(let k=11;k>=0;k--){const hs=month(prev,k).habits;if(hs.length){src=tr('{m} {y} ({n} habit, tanpa centang)',{m:MID[k],y:prev,n:hs.length});break;}}}
+  return wrapModal(`<div class="phead"><h2>${tr('Tambah tahun')}</h2>${xBtn()}</div>
+    <div style="padding:18px 20px;display:flex;flex-direction:column;gap:16px">
+      <div class="row" style="justify-content:space-between"><span class="lbl">${tr('TAHUN')}</span><div class="row" style="gap:6px"><button class="btn" style="width:40px;padding:0" data-a="ayStep" data-v="-1">−</button><b style="width:80px;text-align:center;font-size:20px;border:1.5px solid var(--fg);border-radius:8px;padding:6px 0">${M.year}</b><button class="btn" style="width:40px;padding:0" data-a="ayStep" data-v="1">+</button></div></div>
+      ${prev!=null?`<label class="row" style="gap:10px;font-size:14px;cursor:pointer" data-a="ayCopy"><span class="chk${M.copy?' on':''}">${M.copy?'✓':''}</span><span>${tr('Salin daftar habit dari {src} ke Januari',{src:src||tr('bulan terakhir {y}',{y:prev})})}</span></label>`:''}
+      <div style="background:var(--soft);border-radius:8px;padding:10px 12px;font-size:13px">${exists?`<b style="color:var(--red)">${tr('{y} sudah ada.',{y:M.year})}</b> ${tr('Pilih tahun lain.')}`:tr('Akan dibuat: 12 lembar bulan, Januari–Desember {y}. Data tahun lain tidak berubah.',{y:M.year})}</div>
+      ${M.err?`<div class="err">${esc(M.err)}</div>`:''}
+    </div>
+    <div class="pfoot"><button class="btn lg" data-a="close">${tr('Batal')}</button><button class="btn g lg sp${exists?' dis':''}" data-a="ayGo">${tr('Buat 12 bulan')}</button></div>`,420);
+}
+
+/* Load dari Drive (6h) */
+function loadHtml(M){
+  if(M.busy)return wrapModal(`<div class="phead"><h2>${tr('Memuat dari Drive…')}</h2></div>${loadingBlock()}`,460);
+  if(!M.info)return wrapModal(`<div class="phead"><h2>${tr('Load data dari Drive')}</h2>${xBtn()}</div>${loadingBlock()}`,460);
+  if(!M.info.exists)return wrapModal(`<div class="phead"><h2>${tr('Load data dari Drive')}</h2>${xBtn()}</div><div style="padding:20px;font-size:14px">${tr('Belum ada data di Drive. Save dulu?')}</div><div class="pfoot"><button class="btn lg" data-a="close">${tr('Batal')}</button><button class="btn g lg sp" data-a="saveDrive">${tr('Save ke Drive')}</button></div>`,460);
+  const appNewer=(M.info.appAt||0)>(M.info.driveAt||0);
+  return wrapModal(`<div class="phead"><h2>${tr('Load data dari Drive?')}</h2>${xBtn()}</div>
+    <div style="padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="border:1.5px solid var(--line);border-radius:8px;padding:12px"><div class="lbl" style="font-size:10px">${tr('DI APLIKASI')}</div><b>${fmtStamp(M.info.appAt)}</b><div class="muted" style="font-size:11px">${tr('terakhir diubah')}</div></div>
+        <div style="border:1.5px solid var(--fg);border-radius:8px;padding:12px"><div class="lbl" style="font-size:10px">${tr('DI DRIVE')}</div><b>${fmtStamp(M.info.driveAt)}</b><div class="muted" style="font-size:11px">${tr('terakhir disimpan')}</div></div>
+      </div>
+      <div class="${appNewer?'err':''}" style="${appNewer?'':'background:var(--soft);border-radius:8px;padding:12px 14px;font-size:13px'}">${tr('Data di aplikasi akan diganti dengan versi Drive.')}${appNewer?tr(' Perubahan sejak {t} akan hilang.',{t:fmtStamp(M.info.driveAt)}):''}</div>
+      <label class="row" style="gap:10px;font-size:13px;cursor:pointer" data-a="loadKeep"><span class="chk${M.keep?' on':''}">${M.keep?'✓':''}</span>${tr('Simpan versi sekarang ke Drive sebagai cadangan dulu')}</label>
+      ${M.err?`<div class="err">${esc(M.err)}</div>`:''}
+    </div>
+    <div class="pfoot"><button class="btn lg" data-a="close">${tr('Batal')}</button><button class="btn ${appNewer?'red':'g'} lg sp" data-a="loadGo">${tr('Ganti dengan versi Drive')}</button></div>`,500);
+}
+
+/* ═════════════ Aksi ═════════════ */
+const A={
+  noop(){},
+  init(){init();},
+  retry(){retryNow();},
+  menu(){S.menu=true;render();},
+  menuClose(){S.menu=false;render();},
+  go(d){S.menu=false;S.page=d.p;if(d.p==='journal'){S.jp.edit=false;S.jp.confirm=false;}window.scrollTo(0,0);render();},
+  close(){if(S.modal&&S.modal.busy)return;S.modal=null;render();},
+  cell(d){const st=cellState(`c:${S.y}-${S.m}-${d.id}-${d.d}`);if(st==='failed'){retryNow();return;}toggleCheck(S.y,S.m,d.id,+d.d);},
+  pickJ(d){S.jSel[`${S.y}-${S.m}`]=+d.d;S.jNew=null;render();},
+  // + di Journal Today: hari ini kalau belum ada jurnalnya, kalau sudah ada → hari terakhir yang masih kosong
+  jNewDash(){
+    const {y,m}=S,T=today(),ym=`${y}-${m}`,n=dim(y,m),free=d=>!jOf(dkey(y,m,d))&&!aOf(dkey(y,m,d));
+    const last=y===T.y&&m===T.m?T.d:(y>T.y||(y===T.y&&m>T.m)?1:n);
+    let d=last;while(d>1&&!free(d))d--;if(!free(d))d=last;
+    S.jPrev={ym,d:S.jSel[ym]};S.jSel[ym]=d;S.jNew=ym;render();focusJ();
+  },
+  // × membatalkan: kembali ke jurnal yang tadi dibuka (teks yang sudah diketik tetap tersimpan)
+  jNewCancel(){const p=S.jPrev;if(p&&p.ym===S.jNew){if(p.d==null)delete S.jSel[p.ym];else S.jSel[p.ym]=p.d;}S.jNew=null;S.jPrev=null;render();},
+  jWrite(){const T=today();S.jSel[`${S.y}-${S.m}`]=S.y===T.y&&S.m===T.m?T.d:dim(S.y,S.m);render();setTimeout(()=>{const e=document.getElementById('jt-dash');e&&e.focus();});},
+  openQI(d){const T=today();if(d.d)openQI(S.y,S.m,+d.d);else openQI(T.y,T.m,T.d);},
+  openAdd(d){S.modal={type:'add',draft:newDraft(d.name)};render();setTimeout(()=>{const e=document.getElementById('add-name');e&&!d.name&&e.focus();});},
+  openDetail(d){S.modal={type:'detail',id:d.id,draft:null,confirm:false,saved:false};render();},
+  copyChoice(d){S.copyChoice=d.v;render();},
+  copyNow(){S.copyChoice='copy';A.copyGo();},
+  copyGo(){
+    const {y,m}=S,ym=`${y}-${m}`;
+    if(S.copyChoice==='copy'){const src=findCopySource(y,m);if(src){record(tr('salin habit'),[[y,m]],()=>setHabits(y,m,src.habits.map(h=>({...h,f:{...h.f,days:[...(h.f.days||[])],weeks:[...(h.f.weeks||[])]}}))));toast(tr('{n} habit disalin dari {m} {y}',{n:src.habits.length,m:MID[src.m],y:src.y}));}}
+    else{S.skipCopy[ym]=true;try{localStorage.setItem('hb-skip-copy',JSON.stringify(S.skipCopy));}catch(e){}}
+    render();
+  },
+  snooze(){try{localStorage.setItem('hb-dec-snooze',Date.now()+7*864e5);}catch(e){}render();},
+  createYear(d){createYear(+d.y,true);},
+  goYear(d){S.page='dashboard';S.y=+d.y;const T=today();S.m=S.y===T.y?T.m:0;render();},
+  openAddYear(){const nxt=S.years.length?Math.max(...S.years)+1:today().y;S.modal={type:'addYear',year:nxt,copy:true};const prev=nxt-1;if(S.years.includes(prev))ensureYear(prev);render();},
+  ayStep(d){S.modal.year+=+d.v;S.modal.err='';render();},
+  ayCopy(){S.modal.copy=!S.modal.copy;render();},
+  ayGo(){const M=S.modal;if(S.years.includes(M.year))return;createYear(M.year,M.copy);},
+  // Input cepat
+  qiCheck(d){const q=S.modal;q.checks[d.id]=!q.checks[d.id];render();},
+  qiMood(d){const q=S.modal;q.mood=q.mood===+d.v?0:+d.v;render();},
+  qiShift(d){const q=S.modal;if(q.busy)return;const t=new Date(q.y,q.m,q.d+(+d.v));q.y=t.getFullYear();q.m=t.getMonth();q.d=t.getDate();q.err='';loadQI();},
+  qiSave(){qiSave();},
+  qiCloseDraft(){const q=S.modal;try{localStorage.setItem('hb-qi-draft',JSON.stringify({y:q.y,m:q.m,d:q.d,checks:q.checks,mood:q.mood,journal:q.journal,aff:q.aff}));}catch(e){}S.modal=null;toast(tr('Draft disimpan di perangkat ini'));},
+  qiDraft(){const q=S.modal,dr=q.draft;Object.assign(q,{y:dr.y,m:dr.m,d:dr.d,draft:null});fillQI(q);Object.assign(q,{checks:{...q.checks,...dr.checks},mood:dr.mood,aff:dr.aff!=null?dr.aff:q.aff,journal:dr.journal});render();},
+  qiDraftDrop(){try{localStorage.removeItem('hb-qi-draft');}catch(e){}S.modal.draft=null;render();},
+  // Form habit
+  dType(d){draft().type=d.v;touchDraft();},
+  dDay(d){const dr=draft(),v=+d.v;dr.days=dr.days.includes(v)?dr.days.filter(x=>x!==v):[...dr.days,v];touchDraft();},
+  dWeek(d){const dr=draft(),v=+d.v;dr.weeks=dr.weeks.includes(v)?dr.weeks.filter(x=>x!==v):[...dr.weeks,v];touchDraft();},
+  dGoalMode(d){const dr=draft();dr.goalManual=d.v==='manual';if(dr.goalManual&&!dr.goalVal){const hb=draftToHabit(dr,{id:S.modal.id});dr.goalVal=goalRange(hb,S.y,S.m,1,dim(S.y,S.m));}touchDraft();},
+  calCheck(d){toggleCheck(S.y,S.m,S.modal.id,+d.d);},
+  addSave(){
+    const dr=S.modal.draft;if(!dr.name.trim())return;
+    const M=month(S.y,S.m),h=draftToHabit(dr,{id:uid()});
+    record(tr('tambah habit "{h}"',{h:h.name}),[[S.y,S.m]],()=>setHabits(S.y,S.m,[...M.habits,h]));S.skipCopy[`${S.y}-${S.m}`]=true;S.modal=null;toast(tr('Habit "{n}" ditambahkan',{n:h.name}));
+  },
+  dSave(){
+    const Mo=S.modal;if(!Mo.draft||!Mo.draft.name.trim())return;
+    const dr=Mo.draft,{y,m}=S,base=draftToHabit(dr,{id:Mo.id});
+    const goal=dr.goalManual?Math.max(1,+dr.goalVal||1):null;
+    // Nama & jadwal berlaku untuk bulan ini dan bulan berikutnya di tahun yang sama; goal manual hanya bulan ini.
+    const ks=Array.from({length:12-m},(_,i)=>[y,m+i]);
+    record(tr('ubah habit "{h}"',{h:base.name}),ks,()=>{for(let k=m;k<12;k++){const mm=month(y,k);if(!mm)continue;const i=mm.habits.findIndex(h=>h.id===Mo.id);if(i<0)continue;
+      const hs=mm.habits.slice();hs[i]={...hs[i],name:base.name,f:base.f,start:base.start,goal:k===m?goal:hs[i].goal};setHabits(y,k,hs);}});
+    Mo.draft=null;Mo.saved=true;render();
+  },
+  dDel(){S.modal.confirm=true;render();},
+  affOpen(d){S.modal={type:'aff',k:d.k};render();setTimeout(()=>{const e=document.getElementById('af-text');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}});},
+  setAffOn(d){saveSettings({affOn:d.v==='on'});},
+  showKeys(){S.menu=false;S.modal={type:'keys'};render();},
+  dDelNo(){S.modal.confirm=false;render();},
+  dDelYes(){const M=month(S.y,S.m),h=M.habits.find(x=>x.id===S.modal.id);record(tr('hapus habit "{h}"',{h:h.name}),[[S.y,S.m]],()=>setHabits(S.y,S.m,M.habits.filter(x=>x.id!==S.modal.id)));S.modal=null;toast(tr('"{n}" dihapus dari {m} {y}',{n:h.name,m:MID[S.m],y:S.y}));},
+  // Jurnal
+  jPick(d){S.jp.sel=d.k;S.jp.confirm=false;S.jp.edit=true;render();},
+  jBack(){S.jp.edit=false;render();},
+  jToday(){const T=today();S.jp={year:T.y,sel:dkey(T.y,T.m,T.d),confirm:false,edit:true};if(!S.years.includes(T.y)){S.page='dashboard';S.y=T.y;}render();setTimeout(()=>{const e=document.getElementById('je-text');e&&e.focus();});},
+  jNew(d){const T=today(),m=+d.m,y=S.jp.year;S.jp.sel=y===T.y&&m===T.m?dkey(y,m,T.d):dkey(y,m,dim(y,m));S.jp.edit=true;S.jp.confirm=false;render();},
+  jMood(d){const k=d.k,y=+k.slice(0,4),m=+k.slice(5,7)-1,dd=+k.slice(8,10),v=+d.v;setMood(y,m,dd,moodOf(y,m,dd)===v?0:v);},
+  jDel(){S.jp.confirm=true;render();},
+  jDelNo(){S.jp.confirm=false;render();},
+  jDelYes(d){setJournal(d.k,'');setAffirm(d.k,'');S.jp.sel=null;S.jp.confirm=false;S.jp.edit=false;flush();render();toast(tr('Jurnal dihapus'));},
+  jToDash(d){const k=d.k;S.page='dashboard';S.y=+k.slice(0,4);S.m=+k.slice(5,7)-1;S.jSel[`${S.y}-${S.m}`]=+k.slice(8,10);render();},
+  // Statistik
+  stToggle(d,el,e){e.preventDefault();S.st[d.k]=!S.st[d.k];render();},
+  // Pengaturan
+  setLang(d){saveSettings({lang:d.v});},
+  setTheme(d){saveSettings({theme:d.v});},
+  moodAdd(){const a=[...moodLabels()];if(a.length>=MAX_MOOD)return;a.push('');setMoods(a);setTimeout(()=>{const e=document.getElementById('ml-'+(a.length-1));e&&e.focus();});},
+  // Hapus skor terakhir; kalau skor itu sudah dipakai di data yang terbuka, minta konfirmasi dulu
+  moodDel(){const N=moodN();let c=0;Object.values(S.cache).forEach(Y=>Y.months.forEach(M=>M.mood.forEach(v=>{if(v===N)c++;})));if(c){S.moodAsk={n:N,c};render();}else A.moodDelYes();},
+  moodDelNo(){S.moodAsk=null;render();},
+  moodDelYes(){S.moodAsk=null;setMoods(moodLabels().slice(0,-1));},
+  moodReset(){S.moodAsk=null;setMoods(null);},
+  async repair(){S.repairBusy=true;S.repair=null;render();await flushNow();try{const r=await call('repairStructure');S.repair=r.report||[];S.cache={};H.u=[];H.r=[];S.years=(await call('getInitial',S.y)).years.map(Number);}catch(e){S.repair=[tr('Gagal: ')+msg(e)];}S.repairBusy=false;render();},
+  // Drive
+  async saveDrive(){if(S.modal&&S.modal.type==='load')S.modal=null;toast(tr('Menyimpan ke Google Drive…'));await flushNow();try{const r=await call('saveBackup');S.backupAt=r.backupAt;toast(tr('Tersimpan ke Google Drive · {t}',{t:fmtStamp(r.backupAt).split(', ')[1]}));}catch(e){toast(tr('Belum tersimpan ke Drive: ')+msg(e));}},
+  async loadDrive(){S.modal={type:'load',info:null,keep:true};render();await flushNow();try{S.modal.info=await call('getBackupInfo');}catch(e){S.modal.info={exists:false};S.modal.err=msg(e);}render();},
+  loadKeep(d,el,e){e.preventDefault();S.modal.keep=!S.modal.keep;render();},
+  async loadGo(){const M=S.modal;M.busy=true;M.err='';render();try{await call('loadBackup',M.keep);S.modal=null;S.cache={};H.u=[];H.r=[];S.ready=false;await init();toast(tr('Data dari Google Drive dimuat'));}catch(e){M.busy=false;M.err=msg(e);render();}},
+  print(){window.print();}
+};
+const draft=()=>{const M=S.modal;if(M.type==='detail'&&!M.draft){const h=month(S.y,S.m).habits.find(x=>x.id===M.id);M.draft=habitToDraft(h);}return M.draft;};
+function touchDraft(){if(S.modal.type==='detail'){S.modal.saved=false;S.modal.confirm=false;}render();}
+function focusJ(){setTimeout(()=>{const e=document.getElementById(isMobile()?'jt-m':'jt-dash');if(e){e.focus({preventScroll:true});const l=e.value.length;e.setSelectionRange(l,l);}});}
+async function flushNow(){clearTimeout(Q.timer);let guard=0;while((Q.ops.size||Q.inflight)&&!Q.failed&&guard++<40){if(!Q.inflight)await flush();else await new Promise(r=>setTimeout(r,150));}}
+
+async function createYear(y,copy){
+  if(S.years.includes(y))return;
+  S.modal={type:'addYear',year:y,copy,busy:true};render();
+  await flushNow();
+  try{
+    const data=await call('createYear',y,copy);
+    S.cache[y]=data;S.years=[...S.years,y].sort((a,b)=>a-b);
+    S.modal=null;S.page='dashboard';S.y=y;const T=today();S.m=y===T.y?T.m:0;
+    toast(tr('Lembar {y} siap · 12 bulan',{y}));
+  }catch(e){S.modal={type:'addYear',year:y,copy,busy:false,err:tr('Gagal membuat lembar {y}. ',{y})+msg(e)};render();}
+}
+
+/* Input & change */
+const I={
+  journal(v,d){setJournal(d.k,v);},
+  qiJ(v){S.modal.journal=v;},
+  qiA(v){S.modal.aff=v;},
+  affirm(v,d){setAffirm(d.k,v);},
+  dName(v){draft().name=v;if(S.modal.type==='detail'){S.modal.saved=false;}render();},
+  dN(v,d){const dr=draft();dr[d.k]=Math.max(1,parseInt(v)||1);dr.type=d.t;touchDraft();},
+  dGoal(v){const dr=draft();dr.goalVal=Math.max(1,parseInt(v)||1);dr.goalManual=true;touchDraft();},
+  setName(v){setGreet('name',v.slice(0,16));},
+  setMsg(v){setGreet('msg',v.slice(0,40));},
+  moodLbl(v,d){const a=[...moodLabels()];a[+d.n]=v.slice(0,16);setMoods(a,1200);}
+};
+const C={
+  month(v){S.m=+v;render();},
+  year(v){if(v==='add'){A.openAddYear();return;}S.y=+v;render();},
+  moodSel(v,d){setMood(S.y,S.m,+d.d,+v);},
+  jNewDate(v){const p=v.split('-').map(Number);if(p[0]===S.y&&p[1]-1===S.m&&p[2]){S.jSel[`${S.y}-${S.m}`]=p[2];render();focusJ();}},
+  jMoodSel(v,d){const k=d.k;setMood(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10),+v);},
+  jYear(v){S.jp={year:+v,sel:null,confirm:false,edit:false};render();},
+  jDate(v){if(v){S.jp.sel=v;S.jp.year=+v.slice(0,4);render();}},
+  stYear(v){S.st.year=+v;render();},
+  dStart(v){draft().start=v;touchDraft();}
+};
+
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const fn=A[el.dataset.a];if(!fn)return;
+  if(el.tagName==='A')e.preventDefault();
+  fn(el.dataset,el,e);
+});
+document.addEventListener('input',e=>{const el=e.target;if(el.dataset&&I[el.dataset.i])I[el.dataset.i](el.value,el.dataset,el);});
+document.addEventListener('change',e=>{const el=e.target;if(el.dataset&&C[el.dataset.c])C[el.dataset.c](el.value,el.dataset,el);});
+// Pintasan: Ctrl/⌘+Z undo · Ctrl/⌘+Shift+Z / Ctrl+Y redo · Ctrl/⌘+S simpan · ←/→ ganti bulan · ? daftar pintasan
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(S.menu){S.menu=false;render();}else if(S.modal)A.close();return;}
+  const el=e.target,tag=el&&el.tagName,mod=e.metaKey||e.ctrlKey,k=(e.key||'').toLowerCase();
+  const typing=tag==='TEXTAREA'||(el&&el.isContentEditable)||(tag==='INPUT'&&!/^(checkbox|radio|button|submit|range|color)$/.test(el.type));
+  if(mod&&!e.altKey&&k==='s'){e.preventDefault();saveNow();return;}
+  if(typing||S.modal||S.menu||e.altKey||!S.ready||S.page!=='dashboard')return;
+  if(mod&&k==='z'){e.preventDefault();e.shiftKey?redo():undo();}
+  else if(e.ctrlKey&&!e.metaKey&&k==='y'){e.preventDefault();redo();}
+  else if(!mod&&tag!=='SELECT'&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();stepMonth(e.key==='ArrowLeft'?-1:1);}
+  else if(!mod&&e.key==='?'){e.preventDefault();A.showKeys();}
+});
+// Seret ⋮⋮ untuk mengurutkan habit
+document.addEventListener('dragstart',e=>{const r=e.target.closest&&e.target.closest('[data-drag]');if(!r)return;S.dragFrom=+r.dataset.drag;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',r.dataset.drag);}catch(_){}});
+document.addEventListener('dragover',e=>{const r=e.target.closest&&e.target.closest('[data-drag]');if(!r||S.dragFrom==null)return;e.preventDefault();document.querySelectorAll('.hrow.over').forEach(x=>x!==r&&x.classList.remove('over'));r.classList.add('over');});
+document.addEventListener('drop',e=>{const r=e.target.closest&&e.target.closest('[data-drag]');if(!r||S.dragFrom==null)return;e.preventDefault();const from=S.dragFrom,to=+r.dataset.drag;S.dragFrom=null;if(from===to){render();return;}const hs=month(S.y,S.m).habits.slice();const [x]=hs.splice(from,1);hs.splice(to,0,x);record(tr('urutan habit'),[[S.y,S.m]],()=>setHabits(S.y,S.m,hs));render();});
+document.addEventListener('dragend',()=>{S.dragFrom=null;document.querySelectorAll('.hrow.over').forEach(x=>x.classList.remove('over'));});
+// Posisi slide dashboard HP diingat per bulan
+document.addEventListener('scroll',e=>{const el=e.target;if(!el.dataset||el.dataset.m7==null)return;const sl=el.querySelector('.sl');if(!sl)return;const i=Math.round(el.scrollLeft/sl.offsetWidth);el.dataset.m7=i;S.slide[el.dataset.ym]=i;},true);
+let wasMobile=isMobile();
+window.addEventListener('resize',()=>{if(isMobile()!==wasMobile){wasMobile=isMobile();render();}});
+
+init();
+</script>
+</body>
+</html>
