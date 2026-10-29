@@ -4,7 +4,8 @@
  * Struktur Sheet
  *   _config   Kunci | Nilai                       (tersembunyi)
  *   _habits   ID | Nama terakhir | Dibuat         (tersembunyi)
- *   _journal  Tanggal | Teks | Diubah | Afirmasi  (tersembunyi)
+ *   _journal  Tanggal | Teks | Diubah             (tersembunyi)
+ *   _motivasi ID | Nama | Motivasi 1 … 10        Template motivasi untuk sapaan dashboard
  *   2026 …    Bulan | ID | Habit | Jadwal | Goal | Mulai | 1 … 31
  *             Satu baris per habit per bulan, lalu satu baris MOOD per bulan.
  *             Sel tanggal habit = checkbox, sel tanggal MOOD = skor 1–10
@@ -17,6 +18,7 @@ var DAY_COL = HEAD.length + 1; // kolom G = tanggal 1
 var WIDTH = HEAD.length + 31;
 var MOOD_ID = 'MOOD';
 var MAX_MOOD = 10;
+var MV_MAX = 20, MV_ITEMS = 10, MV_LEN = 150; // template, motivasi per template, karakter per motivasi
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Index')
@@ -35,7 +37,7 @@ function getInitial(y) {
     settings: parseJson_(cfg.settings, {}),
     lastModified: Number(cfg.lastModified) || null,
     backupAt: Number(cfg.backupAt) || null,
-    affLatest: latestAffirm_(),
+    motiv: readMotiv_(),
     data: null
   };
   if (years.indexOf(Number(y)) >= 0) out.data = getYear(y);
@@ -46,28 +48,20 @@ function getYear(y) {
   y = Number(y);
   var model = readYear_(y);
   if (!model) throw new Error(tr_('Lembar ' + y + ' belum ada', 'The ' + y + ' sheet doesn’t exist yet'));
-  var jr = readJournal_().map, journal = {}, affirm = {};
-  Object.keys(jr).forEach(function (k) {
-    if (k.indexOf(y + '-') !== 0) return;
-    if (jr[k].text) journal[k] = jr[k].text;
-    if (jr[k].aff) affirm[k] = jr[k].aff;
-  });
+  var jr = readJournal_().map, journal = {};
+  Object.keys(jr).forEach(function (k) { if (k.indexOf(y + '-') === 0) journal[k] = jr[k].text; });
   model.journal = journal;
-  model.affirm = affirm;
   return model;
 }
 
-/** Menerapkan sekumpulan perubahan dalam satu panggilan (centang, mood, jurnal, daftar habit, pengaturan). */
+/** Menerapkan sekumpulan perubahan dalam satu panggilan (centang, mood, jurnal, daftar habit, pengaturan, motivasi). */
 function applyOps(ops) {
   return withLock_(function () {
     var years = {}, jr = null;
     (ops || []).forEach(function (op) {
-      if (op.t === 'journal' || op.t === 'affirm') {
-        jr = jr || readJournal_();
-        setJournalField_(jr, op.date, op.t === 'journal' ? 'text' : 'aff', op.text);
-        return;
-      }
+      if (op.t === 'journal') { jr = jr || readJournal_(); setJournal_(jr, op.date, op.text); return; }
       if (op.t === 'settings') { setCfg_('settings', JSON.stringify(op.settings || {})); return; }
+      if (op.t === 'motiv') { writeMotiv_(op.list || []); return; }
       var y = Number(op.y);
       if (!(y in years)) years[y] = readYear_(y);
       var Y = years[y];
@@ -183,9 +177,9 @@ function loadBackup(keepCopy) {
       Y.months.forEach(function (M) { registerHabits_(M.habits); });
     });
     var jr = { map: {} };
-    Object.keys(data.journal || {}).forEach(function (k) { setJournalField_(jr, k, 'text', data.journal[k]); });
-    Object.keys(data.affirm || {}).forEach(function (k) { setJournalField_(jr, k, 'aff', data.affirm[k]); });
+    Object.keys(data.journal || {}).forEach(function (k) { setJournal_(jr, k, data.journal[k]); });
     writeJournal_(jr);
+    if (data.motiv) writeMotiv_(data.motiv);
     if (data.settings) setCfg_('settings', JSON.stringify(data.settings));
     touch_();
     return { ok: true };
@@ -338,15 +332,13 @@ function years_() {
 
 /* ───────────── Jurnal ───────────── */
 
-var JCOLS = 4; // Tanggal | Teks | Diubah | Afirmasi
+var JCOLS = 3; // Tanggal | Teks | Diubah
 
 function journalSheet_() {
-  var sh = sheet_('_journal', ['Tanggal', 'Teks', 'Diubah', 'Afirmasi'], true);
+  var sh = sheet_('_journal', ['Tanggal', 'Teks', 'Diubah'], true);
   sh.getRange('A:A').setNumberFormat('@');
-  // Sheet lama (sebelum ada afirmasi) hanya punya 3 kolom
-  if (sh.getMaxColumns() < JCOLS) sh.insertColumnsAfter(sh.getMaxColumns(), JCOLS - sh.getMaxColumns());
-  var h = sh.getRange(1, 4);
-  if (h.getValue() !== 'Afirmasi') h.setValue('Afirmasi').setFontWeight('bold');
+  // Versi lama punya kolom D "Afirmasi"; fiturnya sudah diganti Motivasi, jadi kolomnya dihapus
+  if (sh.getMaxColumns() > JCOLS && sh.getRange(1, JCOLS + 1).getValue() === 'Afirmasi') sh.deleteColumn(JCOLS + 1);
   return sh;
 }
 
@@ -354,10 +346,10 @@ function readJournal_() {
   var sh = journalSheet_(), last = sh.getLastRow(), map = {}, fixed = 0;
   if (last > 1) {
     sh.getRange(2, 1, last - 1, JCOLS).getValues().forEach(function (r) {
-      var raw = r[0], k = fmtDate_(raw), text = String(r[1]), aff = String(r[3]);
-      if (!k || (!text.trim() && !aff.trim())) return;
+      var raw = r[0], k = fmtDate_(raw), text = String(r[1]);
+      if (!k || !text.trim()) return;
       if (k !== raw) fixed++;
-      map[k] = { text: text.trim() ? text : '', aff: aff.trim() ? aff : '', at: Number(r[2]) || 0 };
+      map[k] = { text: text, at: Number(r[2]) || 0 };
     });
   }
   return { map: map, fixed: fixed };
@@ -366,23 +358,55 @@ function readJournal_() {
 function writeJournal_(jr) {
   var sh = journalSheet_(), last = sh.getLastRow();
   if (last > 1) sh.getRange(2, 1, last - 1, JCOLS).clearContent();
-  var rows = Object.keys(jr.map).sort().map(function (k) { var e = jr.map[k]; return [k, e.text || '', e.at, e.aff || '']; });
+  var rows = Object.keys(jr.map).sort().map(function (k) { return [k, jr.map[k].text, jr.map[k].at]; });
   if (rows.length) sh.getRange(2, 1, rows.length, JCOLS).setValues(rows);
 }
 
-/** Mengisi teks jurnal ('text') atau afirmasi ('aff') satu tanggal; baris dihapus kalau keduanya kosong. */
-function setJournalField_(jr, date, field, val) {
-  var e = jr.map[date] || { text: '', aff: '', at: 0 };
-  e[field] = val && String(val).trim() ? String(val) : '';
-  e.at = Date.now();
-  if (e.text || e.aff) jr.map[date] = e; else delete jr.map[date];
+/** Mengisi teks jurnal satu tanggal; teks kosong = barisnya dihapus. */
+function setJournal_(jr, date, text) {
+  if (text && String(text).trim()) jr.map[date] = { text: String(text), at: Date.now() };
+  else delete jr.map[date];
 }
 
-/** Afirmasi dari tanggal paling akhir (sampai hari ini) yang punya afirmasi, untuk sapaan dashboard. */
-function latestAffirm_() {
-  var map = readJournal_().map, todayKey = Utilities.formatDate(new Date(), tz_(), 'yyyy-MM-dd'), best = null;
-  Object.keys(map).forEach(function (k) { if (map[k].aff && k <= todayKey && (!best || k > best)) best = k; });
-  return best ? { date: best, text: map[best].aff } : null;
+/* ───────────── Motivasi ───────────── */
+
+function motivHeader_() {
+  var h = ['ID', 'Nama'];
+  for (var i = 1; i <= MV_ITEMS; i++) h.push('Motivasi ' + i);
+  return h;
+}
+
+/** Daftar template motivasi, urut seperti di Sheet. null = tab belum ada (aplikasi akan mengisi template bawaan). */
+function readMotiv_() {
+  var sh = ss_().getSheetByName('_motivasi');
+  if (!sh) return null;
+  var last = sh.getLastRow();
+  if (last < 2) return [];
+  return cleanMotiv_(sh.getRange(2, 1, last - 1, 2 + MV_ITEMS).getValues()
+    .filter(function (r) { return String(r[0]).trim() || String(r[1]).trim(); })
+    .map(function (r) { return { id: String(r[0]).trim(), name: String(r[1]), items: r.slice(2) }; }));
+}
+
+function writeMotiv_(list) {
+  var sh = sheet_('_motivasi', motivHeader_(), false), last = sh.getLastRow(), w = 2 + MV_ITEMS;
+  if (last > 1) sh.getRange(2, 1, last - 1, w).clearContent();
+  var rows = cleanMotiv_(list).map(function (t) {
+    var r = [t.id, t.name];
+    for (var i = 0; i < MV_ITEMS; i++) r.push(t.items[i] || '');
+    return r;
+  });
+  if (rows.length) sh.getRange(2, 1, rows.length, w).setValues(rows);
+}
+
+function cleanMotiv_(list) {
+  return (list || []).slice(0, MV_MAX).map(function (t) {
+    return {
+      id: String(t.id || '').trim().slice(0, 40) || 'm' + Utilities.getUuid().replace(/-/g, '').slice(0, 8),
+      name: String(t.name || '').trim().slice(0, 40) || 'Template',
+      items: (t.items || []).map(function (x) { return String(x).trim().slice(0, MV_LEN); })
+        .filter(function (x) { return x; }).slice(0, MV_ITEMS)
+    };
+  });
 }
 
 /* ───────────── Registry habit & konfigurasi ───────────── */
@@ -451,8 +475,8 @@ function backupFile_() {
 }
 
 function exportAll_() {
-  var jr = readJournal_().map, journal = {}, affirm = {};
-  Object.keys(jr).forEach(function (k) { if (jr[k].text) journal[k] = jr[k].text; if (jr[k].aff) affirm[k] = jr[k].aff; });
+  var jr = readJournal_().map, journal = {};
+  Object.keys(jr).forEach(function (k) { journal[k] = jr[k].text; });
   return {
     app: 'habit-builder',
     schema: SCHEMA,
@@ -460,7 +484,7 @@ function exportAll_() {
     settings: parseJson_(getCfg_().settings, {}),
     years: years_().map(function (y) { return readYear_(y); }),
     journal: journal,
-    affirm: affirm
+    motiv: readMotiv_()
   };
 }
 

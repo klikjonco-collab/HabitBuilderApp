@@ -5,7 +5,7 @@ Implementasi dari `design-v2/Habit Builder Dashboard.dc.html` (wireframe Claude 
 | File | Isi |
 | --- | --- |
 | `Code.gs` | Server: baca/tulis Google Sheet, buat tahun, Save/Load cadangan ke Drive, periksa & perbaiki struktur |
-| `Index.html` | Seluruh aplikasi (CSS + JS, tanpa build step): dashboard, input cepat, form & detail habit, Jurnal, Statistik, Pengaturan, versi HP |
+| `Index.html` | Seluruh aplikasi (CSS + JS, tanpa build step): dashboard, input cepat, form & detail habit, Jurnal, Statistik, Motivasi, Pengaturan, versi HP |
 | `appsscript.json` | Manifest web app: jalankan sebagai pemilik, akses hanya pemilik |
 
 ## Pasang ke template sheet
